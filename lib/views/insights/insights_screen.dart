@@ -14,6 +14,7 @@ class InsightsScreen extends ConsumerWidget {
     final insightsAsync = ref.watch(insightsProvider);
     final healthScoreAsync = ref.watch(healthScoreProvider);
     final cycleTrendAsync = ref.watch(cycleLengthTrendProvider);
+    final symptomFreqAsync = ref.watch(symptomFrequencyProvider);
 
     return Scaffold(
       backgroundColor: AppTheme.background,
@@ -28,7 +29,7 @@ class InsightsScreen extends ConsumerWidget {
             // Health Score
             healthScoreAsync.when(
               data: (score) => _buildHealthScoreCard(score),
-              loading: () => const CircularProgressIndicator(),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (_, __) => const SizedBox.shrink(),
             ),
             const SizedBox(height: 24),
@@ -36,7 +37,15 @@ class InsightsScreen extends ConsumerWidget {
             // Statistics
             statsAsync.when(
               data: (stats) => _buildStatsCard(stats),
-              loading: () => const CircularProgressIndicator(),
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (_, __) => const SizedBox.shrink(),
+            ),
+            const SizedBox(height: 24),
+
+            // Symptom Distribution
+            symptomFreqAsync.when(
+              data: (freq) => freq.isNotEmpty ? _buildSymptomDistributionChart(freq) : const SizedBox.shrink(),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (_, __) => const SizedBox.shrink(),
             ),
             const SizedBox(height: 24),
@@ -44,7 +53,7 @@ class InsightsScreen extends ConsumerWidget {
             // Cycle Trend Chart
             cycleTrendAsync.when(
               data: (trend) => trend.isNotEmpty ? _buildCycleTrendChart(trend) : const SizedBox.shrink(),
-              loading: () => const CircularProgressIndicator(),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (_, __) => const SizedBox.shrink(),
             ),
             const SizedBox(height: 24),
@@ -52,11 +61,105 @@ class InsightsScreen extends ConsumerWidget {
             // Insights
             insightsAsync.when(
               data: (insights) => _buildInsightsList(insights),
-              loading: () => const CircularProgressIndicator(),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (_, __) => const SizedBox.shrink(),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildSymptomDistributionChart(Map<String, int> freq) {
+    if (freq.isEmpty) return const SizedBox.shrink();
+
+    // Top 5 symptoms for chart
+    final topEntries = freq.entries.toList().take(5).toList();
+    final colors = [
+      AppTheme.primary,
+      AppTheme.secondary,
+      AppTheme.cyclePeriod,
+      AppTheme.cycleOvulation,
+      AppTheme.cycleLuteal,
+    ];
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.black.withOpacity(0.05)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Symptoms Distribution",
+            style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              SizedBox(
+                height: 150,
+                width: 150,
+                child: PieChart(
+                  PieChartData(
+                    sectionsSpace: 4,
+                    centerSpaceRadius: 40,
+                    sections: topEntries.asMap().entries.map((e) {
+                      final index = e.key;
+                      final entry = e.value;
+                      return PieChartSectionData(
+                        color: colors[index % colors.length],
+                        value: entry.value.toDouble(),
+                        title: '',
+                        radius: 50,
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 24),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: topEntries.asMap().entries.map((e) {
+                    final index = e.key;
+                    final entry = e.value;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 12,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: colors[index % colors.length],
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              entry.key,
+                              style: GoogleFonts.outfit(fontSize: 13, color: AppTheme.textSecondary),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Text(
+                            "${entry.value}",
+                            style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

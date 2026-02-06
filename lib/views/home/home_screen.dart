@@ -241,36 +241,83 @@ class HomeScreen extends ConsumerWidget {
   Widget _buildModernInsightCard(AsyncValue<String> insightAsync, Color phaseColor) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.7),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: Colors.white, width: 2),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 20, offset: const Offset(0, 10)),
+          BoxShadow(
+            color: phaseColor.withOpacity(0.08),
+            blurRadius: 30,
+            offset: const Offset(0, 12),
+          ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(color: phaseColor.withOpacity(0.1), shape: BoxShape.circle),
-                child: Icon(Icons.lightbulb_rounded, color: phaseColor, size: 20),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(32),
+        child: Stack(
+          children: [
+            // Decorative background element
+            Positioned(
+              right: -20,
+              top: -20,
+              child: Icon(
+                Icons.spa_rounded,
+                size: 120,
+                color: phaseColor.withOpacity(0.05),
               ),
-              const SizedBox(width: 12),
-              Text("Daily Insight", style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
-            ],
-          ),
-          const SizedBox(height: 16),
-          insightAsync.when(
-            data: (text) => Text(text, style: GoogleFonts.outfit(fontSize: 15, color: AppTheme.textSecondary, height: 1.5)),
-            loading: () => const LinearProgressIndicator(),
-            error: (_, __) => const Text("Unable to load insights today."),
-          ),
-        ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(28),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: phaseColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Icon(Icons.auto_awesome_rounded, color: phaseColor, size: 18),
+                      ),
+                      const SizedBox(width: 14),
+                      Text(
+                        "Daily Insight",
+                        style: GoogleFonts.outfit(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  insightAsync.when(
+                    data: (text) => Text(
+                      text,
+                      style: GoogleFonts.outfit(
+                        fontSize: 15,
+                        color: AppTheme.textSecondary.withOpacity(0.8),
+                        height: 1.6,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+                    loading: () => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(width: double.infinity, height: 12, decoration: BoxDecoration(color: Colors.black.withOpacity(0.03), borderRadius: BorderRadius.circular(6))),
+                        const SizedBox(height: 8),
+                        Container(width: 200, height: 12, decoration: BoxDecoration(color: Colors.black.withOpacity(0.03), borderRadius: BorderRadius.circular(6))),
+                      ],
+                    ),
+                    error: (_, __) => const Text("Take a moment for yourself today. You're doing great!"),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     ).animate().fadeIn(delay: 800.ms).slideY(begin: 0.2);
   }
