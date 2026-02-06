@@ -33,6 +33,8 @@ class ProfileScreen extends ConsumerWidget {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
+      extendBody: true,
+      backgroundColor: AppTheme.background,
       appBar: AppBar(
         title: Text("Profile & Settings", 
           style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
@@ -58,6 +60,7 @@ class ProfileScreen extends ConsumerWidget {
           ),
           
           SafeArea(
+            bottom: false,
             child: settingsAsync.when(
               data: (settings) => SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),

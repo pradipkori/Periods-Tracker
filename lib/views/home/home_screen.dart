@@ -39,6 +39,8 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
+      extendBody: true,
+      backgroundColor: AppTheme.background,
       body: Stack(
         children: [
           // Dynamic Background Gradient
@@ -59,6 +61,7 @@ class HomeScreen extends ConsumerWidget {
 
           // Main Content
           SafeArea(
+            bottom: false,
             child: CustomScrollView(
               physics: const BouncingScrollPhysics(),
               slivers: [

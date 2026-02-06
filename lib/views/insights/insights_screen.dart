@@ -17,55 +17,80 @@ class InsightsScreen extends ConsumerWidget {
     final symptomFreqAsync = ref.watch(symptomFrequencyProvider);
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      extendBody: true,
       backgroundColor: AppTheme.background,
       appBar: AppBar(
         title: Text("Insights & Analytics", style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.transparent,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Health Score
-            healthScoreAsync.when(
-              data: (score) => _buildHealthScoreCard(score),
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, __) => const SizedBox.shrink(),
+      body: Stack(
+        children: [
+          // Dynamic Background Gradient
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppTheme.primary.withOpacity(0.1),
+                  AppTheme.background,
+                  AppTheme.secondary.withOpacity(0.05),
+                ],
+              ),
             ),
-            const SizedBox(height: 24),
-
-            // Statistics
-            statsAsync.when(
-              data: (stats) => _buildStatsCard(stats),
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, __) => const SizedBox.shrink(),
+          ),
+          SafeArea(
+            bottom: false,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Health Score
+                  healthScoreAsync.when(
+                    data: (score) => _buildHealthScoreCard(score),
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (_, __) => const SizedBox.shrink(),
+                  ),
+                  const SizedBox(height: 24),
+      
+                  // Statistics
+                  statsAsync.when(
+                    data: (stats) => _buildStatsCard(stats),
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (_, __) => const SizedBox.shrink(),
+                  ),
+                  const SizedBox(height: 24),
+      
+                  // Symptom Distribution
+                  symptomFreqAsync.when(
+                    data: (freq) => freq.isNotEmpty ? _buildSymptomDistributionChart(freq) : const SizedBox.shrink(),
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (_, __) => const SizedBox.shrink(),
+                  ),
+                  const SizedBox(height: 24),
+      
+                  // Cycle Trend Chart
+                  cycleTrendAsync.when(
+                    data: (trend) => trend.isNotEmpty ? _buildCycleTrendChart(trend) : const SizedBox.shrink(),
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (_, __) => const SizedBox.shrink(),
+                  ),
+                  const SizedBox(height: 24),
+      
+                  // Insights
+                  insightsAsync.when(
+                    data: (insights) => _buildInsightsList(insights),
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (_, __) => const SizedBox.shrink(),
+                  ),
+                  const SizedBox(height: 100), // Spacing for floating footer
+                ],
+              ),
             ),
-            const SizedBox(height: 24),
-
-            // Symptom Distribution
-            symptomFreqAsync.when(
-              data: (freq) => freq.isNotEmpty ? _buildSymptomDistributionChart(freq) : const SizedBox.shrink(),
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, __) => const SizedBox.shrink(),
-            ),
-            const SizedBox(height: 24),
-
-            // Cycle Trend Chart
-            cycleTrendAsync.when(
-              data: (trend) => trend.isNotEmpty ? _buildCycleTrendChart(trend) : const SizedBox.shrink(),
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, __) => const SizedBox.shrink(),
-            ),
-            const SizedBox(height: 24),
-
-            // Insights
-            insightsAsync.when(
-              data: (insights) => _buildInsightsList(insights),
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, __) => const SizedBox.shrink(),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

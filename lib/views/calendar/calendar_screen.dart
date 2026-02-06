@@ -99,6 +99,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
+      extendBody: true,
+      backgroundColor: AppTheme.background,
       appBar: AppBar(
         title: Text("Calendar", style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
         backgroundColor: Colors.transparent,
@@ -122,6 +124,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
           ),
           
           SafeArea(
+            bottom: false,
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Column(
