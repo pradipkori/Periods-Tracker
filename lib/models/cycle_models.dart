@@ -189,3 +189,28 @@ class PregnancyData {
     this.notes,
   });
 }
+
+@collection
+class StoredNotification {
+  Id id = Isar.autoIncrement;
+  
+  String title;
+  String body;
+  
+  @Index()
+  DateTime timestamp;
+  
+  String type; // remote, local, reminder
+  bool isRead = false;
+  
+  String? dataJson; // For storing extra payload data (JSON)
+  
+  StoredNotification({
+    required this.title,
+    required this.body,
+    required this.timestamp,
+    required this.type,
+    this.isRead = false,
+    this.dataJson,
+  });
+}

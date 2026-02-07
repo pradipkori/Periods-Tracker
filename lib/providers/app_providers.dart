@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:period_tracker/models/cycle_models.dart';
 import 'package:period_tracker/services/database_service.dart';
 import 'package:period_tracker/services/prediction_service.dart';
+import 'package:period_tracker/services/push_notification_service.dart';
 import 'package:period_tracker/services/notification_service.dart';
 import 'package:period_tracker/services/analytics_service.dart';
 import 'package:period_tracker/services/export_service.dart';
@@ -36,6 +37,12 @@ final analyticsServiceProvider = Provider<AnalyticsService>((ref) {
 final exportServiceProvider = Provider<ExportService>((ref) {
   final db = ref.watch(dbServiceProvider);
   return ExportService(db);
+});
+
+// Push Notification Service
+final pushNotificationServiceProvider = Provider<PushNotificationService>((ref) {
+  final db = ref.watch(dbServiceProvider);
+  return PushNotificationService(db);
 });
 
 // ========== Data Providers ==========

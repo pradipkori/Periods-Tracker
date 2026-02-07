@@ -244,6 +244,39 @@ class NotificationService {
         ),
       );
       
+      await androidImplementation.createNotificationChannel(
+        const AndroidNotificationChannel(
+          'daily_tips',
+          'Daily Tips',
+          description: 'Health and cycle-related daily tips',
+          importance: Importance.defaultImportance,
+          playSound: true,
+          enableVibration: true,
+        ),
+      );
+
+      await androidImplementation.createNotificationChannel(
+        const AndroidNotificationChannel(
+          'community_updates',
+          'Community Updates',
+          description: 'News and updates from the community',
+          importance: Importance.defaultImportance,
+          playSound: true,
+          enableVibration: true,
+        ),
+      );
+
+      await androidImplementation.createNotificationChannel(
+        const AndroidNotificationChannel(
+          'push_notifications',
+          'Push Notifications',
+          description: 'Remote push notifications from Firebase',
+          importance: Importance.high,
+          playSound: true,
+          enableVibration: true,
+        ),
+      );
+      
       print('Notification channels created successfully');
     }
   }
@@ -381,6 +414,14 @@ class NotificationService {
           UILocalNotificationDateInterpretation.absoluteTime,
     );
 
+    // Save to history
+    await _db.saveNotification(StoredNotification(
+      title: 'Reminder',
+      body: 'Check your cycle status!',
+      timestamp: scheduledDate,
+      type: 'local',
+    ));
+
     // Also schedule with AlarmManager
     await AndroidAlarmManager.oneShotAt(
       scheduledDate,
@@ -487,6 +528,14 @@ class NotificationService {
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time, // Repeat daily
     );
+
+    // Save to history
+    await _db.saveNotification(StoredNotification(
+      title: 'Daily Log Reminder',
+      body: 'Don\'t forget to log your symptoms and mood today!',
+      timestamp: scheduledDate,
+      type: 'local',
+    ));
 
     // Also schedule with AlarmManager
     await AndroidAlarmManager.periodic(

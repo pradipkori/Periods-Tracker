@@ -15,6 +15,7 @@ class DatabaseService {
         ReminderSchema,
         ArticleSchema,
         PregnancyDataSchema,
+        StoredNotificationSchema,
       ],
       directory: dir.path,
     );
@@ -170,6 +171,32 @@ class DatabaseService {
   Future<void> deletePregnancyData(int id) async {
     await isar.writeTxn(() => isar.pregnancyDatas.delete(id));
   }
+
+  // ========== Notifications History ==========
+
+  Future<List<StoredNotification>> getAllNotifications() => 
+    isar.storedNotifications.where().sortByTimestampDesc().findAll();
+
+  Future<void> saveNotification(StoredNotification notification) async {
+    await isar.writeTxn(() => isar.storedNotifications.put(notification));
+  }
+
+  Future<void> markAllAsRead() async {
+    await isar.writeTxn(() async {
+      final unread = await isar.storedNotifications.filter().isReadEqualTo(false).findAll();
+      for (final n in unread) {
+        n.isRead = true;
+      }
+      await isar.storedNotifications.putAll(unread);
+    });
+  }
+
+  Future<void> clearNotificationHistory() async {
+    await isar.writeTxn(() => isar.storedNotifications.clear());
+  }
+
+  Future<int> getUnreadNotificationCount() =>
+    isar.storedNotifications.filter().isReadEqualTo(false).count();
 
   // ========== Statistics & Analytics ==========
   

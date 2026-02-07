@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "369931329999",
+    "project_id": "periods-tracker-afbc4",
+    "storage_bucket": "periods-tracker-afbc4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:369931329999:android:7c10da6d9eff384e78f2ba",
+        "android_client_info": {
+          "package_name": "com.antigravity.period_tracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVon7lL7lKZABJdP8JSCT657eQSeolZ-4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

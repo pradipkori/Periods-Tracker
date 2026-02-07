@@ -10,6 +10,7 @@ import 'package:period_tracker/views/logs/logging_screen.dart';
 import 'package:period_tracker/views/logs/period_logging_screen.dart';
 import 'package:period_tracker/views/insights/insights_screen.dart';
 import 'package:period_tracker/views/profile/profile_screen.dart';
+import 'package:period_tracker/views/notifications/notifications_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -65,7 +66,7 @@ class HomeScreen extends ConsumerWidget {
             child: CustomScrollView(
               physics: const BouncingScrollPhysics(),
               slivers: [
-                SliverToBoxAdapter(child: _buildHeader(settingsAsync)),
+                SliverToBoxAdapter(child: _buildHeader(context, settingsAsync)),
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   sliver: SliverToBoxAdapter(
@@ -102,7 +103,7 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeader(AsyncValue<UserSettings> settingsAsync) {
+  Widget _buildHeader(BuildContext context, AsyncValue<UserSettings> settingsAsync) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
       child: Row(
@@ -125,7 +126,10 @@ class HomeScreen extends ConsumerWidget {
           ),
           _GlassButton(
             icon: Icons.notifications_none_rounded,
-            onPressed: () {},
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+            ),
           ),
         ],
       ),
