@@ -165,6 +165,18 @@ final periodLengthTrendProvider = FutureProvider<List<Map<String, dynamic>>>((re
   return await analytics.getPeriodLengthTrend();
 });
 
+// Symptoms By Phase
+final symptomsByPhaseProvider = FutureProvider<Map<String, List<String>>>((ref) async {
+  final analytics = ref.watch(analyticsServiceProvider);
+  return await analytics.getSymptomsByPhase();
+});
+
+// Mood Phase Correlation
+final moodPhaseCorrelationProvider = FutureProvider<Map<String, Map<String, int>>>((ref) async {
+  final analytics = ref.watch(analyticsServiceProvider);
+  return await analytics.getMoodPhaseCorrelation();
+});
+
 // ========== Health Log Provider for Specific Date ==========
 
 final healthLogProvider = FutureProvider.family<HealthLog?, DateTime>((ref, date) async {

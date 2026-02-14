@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:period_tracker/models/cycle_models.dart';
 import 'package:period_tracker/providers/app_providers.dart';
 import 'package:period_tracker/theme/app_theme.dart';
+import 'package:period_tracker/utils/date_utils.dart' as app_date_utils;
 import 'package:period_tracker/views/home/home_screen.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -32,35 +35,113 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              AppTheme.primary.withOpacity(0.1),
-              AppTheme.background,
-            ],
+      body: Stack(
+        children: [
+          // Dynamic Parallax Background
+          _buildAnimatedBackground(),
+          
+          SafeArea(
+            child: Column(
+              children: [
+                Expanded(
+                  child: PageView(
+                    controller: _pageController,
+                    onPageChanged: (page) => setState(() => _currentPage = page),
+                    children: [
+                      _buildWelcomePage(),
+                      _buildNamePage(),
+                      _buildLastPeriodPage(),
+                      _buildCycleSettingsPage(),
+                      _buildCompletePage(),
+                    ],
+                  ),
+                ),
+                _buildBottomNavigation(),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAnimatedBackground() {
+    return Stack(
+      children: [
+        // Base Gradient
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppTheme.primary.withOpacity(0.15),
+                AppTheme.background,
+                AppTheme.secondary.withOpacity(0.05),
+              ],
+            ),
           ),
         ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                child: PageView(
-                  controller: _pageController,
-                  onPageChanged: (page) => setState(() => _currentPage = page),
-                  children: [
-                    _buildWelcomePage(),
-                    _buildNamePage(),
-                    _buildLastPeriodPage(),
-                    _buildCycleSettingsPage(),
-                    _buildCompletePage(),
-                  ],
-                ),
+        
+        // Floating 3D Orbs with parallax
+        Positioned(
+          top: -100 + (_currentPage * -30),
+          right: -50 + (_currentPage * 20),
+          child: _buildOrb(300, AppTheme.primary.withOpacity(0.1)),
+        ).animate().moveY(begin: -10, end: 10, duration: 4.seconds, curve: Curves.easeInOut).then().animate(onPlay: (c) => c.repeat(reverse: true)),
+        
+        Positioned(
+          bottom: -50 + (_currentPage * 40),
+          left: -80 + (_currentPage * -15),
+          child: _buildOrb(250, AppTheme.secondary.withOpacity(0.08)),
+        ).animate().moveY(begin: 15, end: -15, duration: 5.seconds, curve: Curves.easeInOut).then().animate(onPlay: (c) => c.repeat(reverse: true)),
+        
+        Positioned(
+          top: 200 + (_currentPage * 50),
+          left: -100 + (_currentPage * 30),
+          child: _buildOrb(180, Colors.pink.withOpacity(0.05)),
+        ).animate().moveX(begin: -20, end: 20, duration: 6.seconds, curve: Curves.easeInOut).then().animate(onPlay: (c) => c.repeat(reverse: true)),
+      ],
+    );
+  }
+
+  Widget _buildOrb(double size, Color color) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: RadialGradient(
+          colors: [color, color.withOpacity(0)],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGlassCard({required Widget child, EdgeInsets? padding}) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(32),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+            child: Container(
+              padding: padding ?? const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(32),
+                border: Border.all(color: Colors.white.withOpacity(0.3), width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
               ),
-              _buildBottomNavigation(),
-            ],
+              child: child,
+            ),
           ),
         ),
       ),
@@ -68,85 +149,97 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   Widget _buildWelcomePage() {
-    return Padding(
-      padding: const EdgeInsets.all(32),
+    return _buildGlassCard(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.favorite, size: 100, color: AppTheme.primary),
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(color: AppTheme.primary.withOpacity(0.2), blurRadius: 20, spreadRadius: 5)
+              ],
+            ),
+            child: const Icon(Icons.favorite, size: 80, color: AppTheme.primary),
+          ).animate().scale(duration: 800.ms, curve: Curves.elasticOut).shimmer(delay: 1.seconds),
           const SizedBox(height: 40),
           Text(
-            'Welcome to\nPeriod Tracker',
+            'Discover Your\nRhythm',
             textAlign: TextAlign.center,
             style: GoogleFonts.outfit(
-              fontSize: 36,
+              fontSize: 34,
               fontWeight: FontWeight.bold,
               color: AppTheme.textPrimary,
+              height: 1.1,
             ),
-          ),
-          const SizedBox(height: 24),
+          ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.2, end: 0),
+          const SizedBox(height: 20),
           Text(
-            'Track your cycle, predict your period, and understand your body better.',
+            'Track. Predict. Understand.\nYour body, simplified.',
             textAlign: TextAlign.center,
             style: GoogleFonts.outfit(
               fontSize: 16,
-              color: AppTheme.textSecondary,
+              color: AppTheme.textSecondary.withOpacity(0.8),
+              fontWeight: FontWeight.w500,
             ),
-          ),
+          ).animate().fadeIn(delay: 500.ms).slideY(begin: 0.2, end: 0),
         ],
       ),
     );
   }
 
   Widget _buildNamePage() {
-    return Padding(
-      padding: const EdgeInsets.all(32),
+    return _buildGlassCard(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.person, size: 80, color: AppTheme.primary),
-          const SizedBox(height: 40),
           Text(
-            'What should we call you?',
+            'Hello! What\'s\nyour name?',
+            textAlign: TextAlign.center,
             style: GoogleFonts.outfit(
-              fontSize: 28,
+              fontSize: 30,
               fontWeight: FontWeight.bold,
+              color: AppTheme.textPrimary,
+              height: 1.1,
             ),
-          ),
+          ).animate().fadeIn().slideY(begin: -0.2, end: 0),
           const SizedBox(height: 32),
           TextField(
             onChanged: (value) => setState(() => _userName = value),
             decoration: InputDecoration(
               hintText: 'Enter your name',
+              hintStyle: GoogleFonts.outfit(color: AppTheme.textSecondary.withOpacity(0.5)),
               filled: true,
-              fillColor: Colors.white,
+              fillColor: Colors.white.withOpacity(0.8),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(20),
                 borderSide: BorderSide.none,
               ),
               prefixIcon: const Icon(Icons.person_outline, color: AppTheme.primary),
             ),
-            style: GoogleFonts.outfit(fontSize: 18),
-          ),
+            style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold),
+          ).animate().fadeIn(delay: 300.ms).scale(begin: const Offset(0.9, 0.9)),
         ],
       ),
     );
   }
 
   Widget _buildLastPeriodPage() {
-    return Padding(
-      padding: const EdgeInsets.all(32),
+    return _buildGlassCard(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.calendar_today, size: 80, color: AppTheme.primary),
-          const SizedBox(height: 40),
           Text(
-            'When did your last period start?',
+            'When was your\nlast period?',
             textAlign: TextAlign.center,
             style: GoogleFonts.outfit(
-              fontSize: 28,
+              fontSize: 30,
               fontWeight: FontWeight.bold,
+              color: AppTheme.textPrimary,
+              height: 1.1,
             ),
           ),
           const SizedBox(height: 32),
@@ -157,6 +250,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 initialDate: _lastPeriodDate,
                 firstDate: DateTime.now().subtract(const Duration(days: 90)),
                 lastDate: DateTime.now(),
+                builder: (context, child) {
+                  return Theme(
+                    data: Theme.of(context).copyWith(
+                      colorScheme: ColorScheme.light(primary: AppTheme.primary),
+                    ),
+                    child: child!,
+                  );
+                },
               );
               if (picked != null) {
                 setState(() => _lastPeriodDate = picked);
@@ -165,25 +266,33 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             child: Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppTheme.primary, width: 2),
+                color: Colors.white.withOpacity(0.9),
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(color: AppTheme.primary.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, 8))
+                ],
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.calendar_month, color: AppTheme.primary),
-                  const SizedBox(width: 12),
+                  const Icon(Icons.calendar_month_rounded, color: AppTheme.primary, size: 28),
+                  const SizedBox(width: 16),
                   Text(
-                    '${_lastPeriodDate.day}/${_lastPeriodDate.month}/${_lastPeriodDate.year}',
+                    app_date_utils.DateUtils.formatDate(_lastPeriodDate),
                     style: GoogleFonts.outfit(
-                      fontSize: 20,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
+                      color: AppTheme.textPrimary,
                     ),
                   ),
                 ],
               ),
             ),
+          ).animate().fadeIn(delay: 300.ms).scale(begin: const Offset(0.8, 0.8)),
+          const SizedBox(height: 16),
+          Text(
+            'We use this to start your predictions',
+            style: GoogleFonts.outfit(fontSize: 13, color: AppTheme.textSecondary),
           ),
         ],
       ),
@@ -191,36 +300,37 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   Widget _buildCycleSettingsPage() {
-    return Padding(
-      padding: const EdgeInsets.all(32),
+    return _buildGlassCard(
+      padding: const EdgeInsets.all(24),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.settings, size: 80, color: AppTheme.primary),
-          const SizedBox(height: 40),
           Text(
-            'Customize your cycle',
+            'Refine your\nCycle',
+            textAlign: TextAlign.center,
             style: GoogleFonts.outfit(
-              fontSize: 28,
+              fontSize: 30,
               fontWeight: FontWeight.bold,
+              color: AppTheme.textPrimary,
+              height: 1.1,
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 24),
           _buildSliderSetting(
-            'Average Cycle Length',
+            'Cycle Length',
             _averageCycleLength,
             21,
             35,
             (value) => setState(() => _averageCycleLength = value.toInt()),
-          ),
+          ).animate().fadeIn(delay: 200.ms).slideX(begin: 0.1, end: 0),
           const SizedBox(height: 24),
           _buildSliderSetting(
-            'Average Period Length',
+            'Period Duration',
             _averagePeriodLength,
             2,
             10,
             (value) => setState(() => _averagePeriodLength = value.toInt()),
-          ),
+          ).animate().fadeIn(delay: 400.ms).slideX(begin: 0.1, end: 0),
         ],
       ),
     );
@@ -230,68 +340,81 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w500),
-        ),
-        const SizedBox(height: 8),
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
-              child: Slider(
-                value: value.toDouble(),
-                min: min.toDouble(),
-                max: max.toDouble(),
-                divisions: max - min,
-                activeColor: AppTheme.primary,
-                label: '$value days',
-                onChanged: onChanged,
-              ),
+            Text(
+              label,
+              style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
                 color: AppTheme.primary,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
-                '$value',
-                style: GoogleFonts.outfit(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
+                '$value Days',
+                style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
               ),
             ),
           ],
+        ),
+        const SizedBox(height: 12),
+        SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            activeTrackColor: AppTheme.primary,
+            inactiveTrackColor: AppTheme.primary.withOpacity(0.1),
+            thumbColor: Colors.white,
+            overlayColor: AppTheme.primary.withOpacity(0.1),
+            trackHeight: 6,
+            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12, elevation: 4),
+          ),
+          child: Slider(
+            value: value.toDouble(),
+            min: min.toDouble(),
+            max: max.toDouble(),
+            onChanged: onChanged,
+          ),
         ),
       ],
     );
   }
 
   Widget _buildCompletePage() {
-    return Padding(
-      padding: const EdgeInsets.all(32),
+    return _buildGlassCard(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.check_circle, size: 100, color: Colors.green),
-          const SizedBox(height: 40),
-          Text(
-            'All Set!',
-            style: GoogleFonts.outfit(
-              fontSize: 36,
-              fontWeight: FontWeight.bold,
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.green.shade50,
+              shape: BoxShape.circle,
             ),
-          ),
-          const SizedBox(height: 24),
+            child: Icon(Icons.check_circle_rounded, size: 80, color: Colors.green.shade600),
+          ).animate().scale(duration: 800.ms, curve: Curves.elasticOut),
+          const SizedBox(height: 32),
           Text(
-            'You\'re ready to start tracking your cycle and understanding your body better.',
+            'Everything is\nReady!',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.outfit(
+              fontSize: 34,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.textPrimary,
+              height: 1.1,
+            ),
+          ).animate().fadeIn(delay: 300.ms),
+          const SizedBox(height: 16),
+          Text(
+            'Your personalized cycle guide is prepared and waiting for you.',
             textAlign: TextAlign.center,
             style: GoogleFonts.outfit(
               fontSize: 16,
               color: AppTheme.textSecondary,
+              height: 1.4,
             ),
-          ),
+          ).animate().fadeIn(delay: 500.ms),
         ],
       ),
     );
@@ -299,47 +422,57 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   Widget _buildBottomNavigation() {
     return Padding(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          if (_currentPage > 0)
-            TextButton(
-              onPressed: () => _pageController.previousPage(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-              ),
-              child: Text(
-                'Back',
-                style: GoogleFonts.outfit(fontSize: 16, color: AppTheme.textSecondary),
-              ),
-            )
-          else
-            const SizedBox(width: 80),
+          // Back Button / Placeholder
+          SizedBox(
+            width: 80,
+            child: _currentPage > 0 
+              ? TextButton(
+                  onPressed: () => _pageController.previousPage(
+                    duration: const Duration(milliseconds: 400),
+                    curve: Curves.easeOutCubic,
+                  ),
+                  child: Text(
+                    'Back',
+                    style: GoogleFonts.outfit(fontSize: 16, color: AppTheme.textSecondary, fontWeight: FontWeight.w600),
+                  ),
+                )
+              : null,
+          ),
+          
+          // Indicators
           Row(
             children: List.generate(
               5,
-              (index) => Container(
+              (index) => AnimatedContainer(
+                duration: 300.ms,
                 margin: const EdgeInsets.symmetric(horizontal: 4),
                 width: _currentPage == index ? 24 : 8,
                 height: 8,
                 decoration: BoxDecoration(
-                  color: _currentPage == index ? AppTheme.primary : AppTheme.textSecondary.withOpacity(0.3),
+                  color: _currentPage == index ? AppTheme.primary : AppTheme.primary.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
             ),
           ),
+          
+          // Next Button
           ElevatedButton(
             onPressed: _currentPage == 4 ? _completeOnboarding : _nextPage,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primary,
               foregroundColor: Colors.white,
+              elevation: 4,
+              shadowColor: AppTheme.primary.withOpacity(0.4),
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             ),
             child: Text(
-              _currentPage == 4 ? 'Get Started' : 'Next',
+              _currentPage == 4 ? 'Let\'s Go' : 'Next',
               style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
@@ -350,52 +483,38 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   void _nextPage() {
     _pageController.nextPage(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOutQuart,
     );
   }
 
   Future<void> _completeOnboarding() async {
-  final db = ref.read(dbServiceProvider);
-  final settings = await db.getSettings();
+    final db = ref.read(dbServiceProvider);
+    final settings = await db.getSettings();
 
-  settings.userName = _userName.isNotEmpty ? _userName : 'User';
-  settings.lastPeriodDate = _lastPeriodDate;
-  settings.averageCycleLength = _averageCycleLength;
-  settings.averagePeriodLength = _averagePeriodLength;
-  settings.hasCompletedOnboarding = true;
+    settings.userName = _userName.isNotEmpty ? _userName : 'User';
+    settings.lastPeriodDate = _lastPeriodDate;
+    settings.averageCycleLength = _averageCycleLength;
+    settings.averagePeriodLength = _averagePeriodLength;
+    settings.hasCompletedOnboarding = true;
 
-  await db.saveSettings(settings);
+    await db.saveSettings(settings);
 
-  // STEP 1: Delete ALL periods (predicted AND actual) for this month
-  final allCycles = await db.getAllCycles();
-  final loggedMonth = _lastPeriodDate.month;
-  final loggedYear = _lastPeriodDate.year;
-  
-  for (final cycle in allCycles) {
-    // Delete if same month/year (both predicted and actual)
-    if (cycle.startDate.month == loggedMonth && 
-        cycle.startDate.year == loggedYear) {
-      await db.deleteCycle(cycle.id);
-      print('🗑️ Deleted ${cycle.isPredicted ? "predicted" : "actual"} period for ${cycle.startDate}');
+    // Initial period log
+    final cycle = CycleLog(
+      startDate: _lastPeriodDate,
+      endDate: _lastPeriodDate.add(Duration(days: _averagePeriodLength)),
+    );
+    await db.saveCycle(cycle);
+
+    // Generate predictions
+    final predictionService = ref.read(predictionServiceProvider);
+    await predictionService.generatePredictions();
+
+    if (mounted) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+      );
     }
   }
-
-  // STEP 2: Create initial period log with user's actual dates
-  final cycle = CycleLog(
-    startDate: _lastPeriodDate,
-    endDate: _lastPeriodDate.add(Duration(days: _averagePeriodLength)),
-  );
-  await db.saveCycle(cycle);
-
-  // STEP 3: Generate predictions for future months
-  final predictionService = ref.read(predictionServiceProvider);
-  await predictionService.generatePredictions();
-
-  if (mounted) {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const HomeScreen()),
-    );
-  }
-}
 }

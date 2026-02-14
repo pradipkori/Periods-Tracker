@@ -15,68 +15,220 @@ class ExportService {
 
   ExportService(this._db);
 
-  // Export data to PDF
+  // Export data to PDF with modern styling
   Future<File> exportToPdf() async {
     final pdf = pw.Document();
     final cycles = await _db.getActualCycles();
     final stats = await _db.getCycleStatistics();
     final settings = await _db.getSettings();
 
+    // Brand Colors
+    const primaryColor = PdfColor.fromInt(0xFFFF7EB3);
+    const secondaryColor = PdfColor.fromInt(0xFF8B5CF6);
+    const textColor = PdfColor.fromInt(0xFF2D3142);
+    const lightTextColor = PdfColor.fromInt(0xFF9EA3B0);
+    const bgColor = PdfColor.fromInt(0xFFFDFAFB);
+
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
-        build: (context) => [
-          // Header
-          pw.Header(
-            level: 0,
-            child: pw.Text(
-              'Period Tracker Report',
-              style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold),
+        margin: const pw.EdgeInsets.all(40),
+        header: (context) => pw.Container(
+          alignment: pw.Alignment.centerRight,
+          margin: const pw.EdgeInsets.only(bottom: 20),
+          child: pw.Text(
+            'PERIOD TRACKER REPORT',
+            style: pw.TextStyle(
+              color: PdfColor(primaryColor.red * 0.4, primaryColor.green * 0.4, primaryColor.blue * 0.4),
+              fontSize: 10,
+              fontWeight: pw.FontWeight.bold,
             ),
           ),
-          pw.SizedBox(height: 20),
-
-          // User Info
-          pw.Text(
-            'User: ${settings.userName}',
-            style: pw.TextStyle(fontSize: 14),
+        ),
+        footer: (context) => pw.Container(
+          alignment: pw.Alignment.centerRight,
+          margin: const pw.EdgeInsets.only(top: 20),
+          child: pw.Text(
+            'Page ${context.pageNumber} of ${context.pagesCount}',
+            style: const pw.TextStyle(color: lightTextColor, fontSize: 10),
           ),
-          pw.Text(
-            'Report Generated: ${app_date_utils.DateUtils.formatDate(DateTime.now())}',
-            style: pw.TextStyle(fontSize: 12),
+        ),
+        build: (context) => [
+          // Elegant Header Section
+          pw.Container(
+            padding: const pw.EdgeInsets.all(30),
+            decoration: pw.BoxDecoration(
+              color: primaryColor,
+              borderRadius: const pw.BorderRadius.all(pw.Radius.circular(20)),
+            ),
+            child: pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text(
+                      'Health Insights',
+                      style: pw.TextStyle(
+                        color: PdfColors.white,
+                        fontSize: 28,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                    pw.SizedBox(height: 5),
+                    pw.Text(
+                      'Personalized report for ${settings.userName}',
+                      style: const pw.TextStyle(
+                        color: PdfColors.white,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.end,
+                  children: [
+                    pw.Text(
+                      app_date_utils.DateUtils.formatDate(DateTime.now()),
+                      style: const pw.TextStyle(
+                        color: PdfColors.white,
+                        fontSize: 12,
+                      ),
+                    ),
+                    pw.Text(
+                      'v1.0.0',
+                      style: pw.TextStyle(
+                        color: PdfColor(1, 1, 1, 0.7),
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-          pw.SizedBox(height: 20),
+          pw.SizedBox(height: 30),
 
-          // Statistics
-          pw.Header(level: 1, child: pw.Text('Cycle Statistics')),
-          pw.Table.fromTextArray(
-            data: [
-              ['Metric', 'Value'],
-              ['Total Cycles Tracked', '${stats['totalCycles']}'],
-              ['Average Cycle Length', '${stats['averageCycleLength']} days'],
-              ['Average Period Length', '${stats['averagePeriodLength']} days'],
-              ['Shortest Cycle', '${stats['shortestCycle']} days'],
-              ['Longest Cycle', '${stats['longestCycle']} days'],
+          // Overview Section
+          pw.Text(
+            'CYCLE SNAPSHOT',
+            style: pw.TextStyle(
+              color: textColor,
+              fontSize: 12,
+              fontWeight: pw.FontWeight.bold,
+              letterSpacing: 2,
+            ),
+          ),
+          pw.SizedBox(height: 15),
+          pw.Row(
+            children: [
+              _buildStatCard('Avg Cycle', '${stats['averageCycleLength']} Days', primaryColor),
+              pw.SizedBox(width: 15),
+              _buildStatCard('Avg Period', '${stats['averagePeriodLength']} Days', secondaryColor),
+              pw.SizedBox(width: 15),
+              _buildStatCard('Total Cycles', '${stats['totalCycles']}', const PdfColor.fromInt(0xFFFFD166)),
             ],
           ),
-          pw.SizedBox(height: 20),
+          pw.SizedBox(height: 30),
 
-          // Cycle History
-          pw.Header(level: 1, child: pw.Text('Cycle History')),
-          pw.Table.fromTextArray(
-            headers: ['Start Date', 'End Date', 'Duration'],
-            data: cycles.take(10).map((cycle) {
+          // Detailed Stats Table
+          pw.Container(
+            padding: const pw.EdgeInsets.all(20),
+            decoration: pw.BoxDecoration(
+              color: PdfColors.white,
+              borderRadius: const pw.BorderRadius.all(pw.Radius.circular(15)),
+              border: pw.Border.all(color: PdfColors.grey200),
+            ),
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text(
+                  'Range Analysis',
+                  style: pw.TextStyle(
+                    color: textColor,
+                    fontSize: 16,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                pw.Divider(color: PdfColors.grey200, height: 20),
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text('Shortest Recorded Cycle', style: const pw.TextStyle(color: lightTextColor)),
+                    pw.Text('${stats['shortestCycle']} Days', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                  ],
+                ),
+                pw.SizedBox(height: 10),
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text('Longest Recorded Cycle', style: const pw.TextStyle(color: lightTextColor)),
+                    pw.Text('${stats['longestCycle']} Days', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          pw.SizedBox(height: 30),
+
+          // Cycle History Section
+          pw.Text(
+            'RECENT HISTORY',
+            style: pw.TextStyle(
+              color: textColor,
+              fontSize: 12,
+              fontWeight: pw.FontWeight.bold,
+              letterSpacing: 2,
+            ),
+          ),
+          pw.SizedBox(height: 15),
+          pw.TableHelper.fromTextArray(
+            border: null,
+            headerStyle: pw.TextStyle(
+              color: PdfColors.white,
+              fontWeight: pw.FontWeight.bold,
+              fontSize: 10,
+            ),
+            headerDecoration: pw.BoxDecoration(
+              color: primaryColor,
+              borderRadius: const pw.BorderRadius.only(
+                topLeft: pw.Radius.circular(10),
+                topRight: pw.Radius.circular(10),
+              ),
+            ),
+            rowDecoration: const pw.BoxDecoration(
+              border: pw.Border(bottom: pw.BorderSide(color: PdfColors.grey200, width: 0.5)),
+            ),
+            cellAlignment: pw.Alignment.centerLeft,
+            cellStyle: const pw.TextStyle(fontSize: 10, color: textColor),
+            columnWidths: {
+              0: const pw.FlexColumnWidth(2),
+              1: const pw.FlexColumnWidth(2),
+              2: const pw.FlexColumnWidth(1),
+            },
+            headers: ['START DATE', 'END DATE', 'DURATION'],
+            data: cycles.take(15).map((cycle) {
               final duration = cycle.endDate != null
                   ? '${cycle.endDate!.difference(cycle.startDate).inDays + 1} days'
-                  : 'Ongoing';
+                  : 'Active';
               return [
-                app_date_utils.DateUtils.formatDate(cycle.startDate),
+                app_date_utils.DateUtils.formatDate(cycle.startDate).toUpperCase(),
                 cycle.endDate != null
-                    ? app_date_utils.DateUtils.formatDate(cycle.endDate!)
+                    ? app_date_utils.DateUtils.formatDate(cycle.endDate!).toUpperCase()
                     : '-',
                 duration,
               ];
             }).toList(),
+          ),
+          
+          pw.SizedBox(height: 40),
+          pw.Divider(color: PdfColors.grey300),
+          pw.SizedBox(height: 10),
+          pw.Center(
+            child: pw.Text(
+              'Generated securely by Period Tracker App on ${app_date_utils.DateUtils.formatDate(DateTime.now())}',
+              style: const pw.TextStyle(color: lightTextColor, fontSize: 8),
+            ),
           ),
         ],
       ),
@@ -290,5 +442,35 @@ class ExportService {
       print('Error restoring from backup: $e');
       return false;
     }
+  }
+
+  pw.Widget _buildStatCard(String label, String value, PdfColor color) {
+    return pw.Expanded(
+      child: pw.Container(
+        padding: const pw.EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+        decoration: pw.BoxDecoration(
+          color: PdfColors.white,
+          borderRadius: const pw.BorderRadius.all(pw.Radius.circular(15)),
+          border: pw.Border.all(color: PdfColor(color.red, color.green, color.blue, 0.3), width: 1),
+        ),
+        child: pw.Column(
+          children: [
+            pw.Text(
+              label,
+              style: const pw.TextStyle(color: PdfColors.grey700, fontSize: 9),
+            ),
+            pw.SizedBox(height: 5),
+            pw.Text(
+              value,
+              style: pw.TextStyle(
+                color: color,
+                fontSize: 16,
+                fontWeight: pw.FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

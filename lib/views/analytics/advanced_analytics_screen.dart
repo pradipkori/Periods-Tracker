@@ -5,6 +5,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:period_tracker/providers/app_providers.dart';
 import 'package:period_tracker/theme/app_theme.dart';
 import 'package:period_tracker/utils/date_utils.dart' as app_date_utils;
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:period_tracker/utils/constants.dart';
 
 class AdvancedAnalyticsScreen extends ConsumerWidget {
   const AdvancedAnalyticsScreen({super.key});
@@ -17,6 +19,8 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
     final symptomFreqAsync = ref.watch(symptomFrequencyProvider);
     final moodFreqAsync = ref.watch(moodFrequencyProvider);
     final healthScoreAsync = ref.watch(healthScoreProvider);
+    final moodPhaseAsync = ref.watch(moodPhaseCorrelationProvider);
+    final symptomsByPhaseAsync = ref.watch(symptomsByPhaseProvider);
 
     return Scaffold(
       backgroundColor: AppTheme.background,
@@ -31,7 +35,24 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
             // Health Score Card
             healthScoreAsync.when(
               data: (score) => _buildHealthScoreCard(score),
-              loading: () => const CircularProgressIndicator(),
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (_, __) => const SizedBox.shrink(),
+            ),
+            const SizedBox(height: 24),
+
+            // Phase Analysis (New Section)
+            Text(
+              "Phase Insights",
+              style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            symptomsByPhaseAsync.when(
+              data: (data) => moodPhaseAsync.when(
+                data: (moodData) => _buildPhaseAnalysis(data, moodData),
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (_, __) => const SizedBox.shrink(),
+              ),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (_, __) => const SizedBox.shrink(),
             ),
             const SizedBox(height: 24),
@@ -44,7 +65,7 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
             const SizedBox(height: 16),
             statsAsync.when(
               data: (stats) => _buildCycleOverview(stats),
-              loading: () => const CircularProgressIndicator(),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (_, __) => const SizedBox.shrink(),
             ),
             const SizedBox(height: 24),
@@ -171,6 +192,110 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
           Icon(scoreIcon, size: 80, color: Colors.white.withOpacity(0.3)),
         ],
       ),
+    ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.2, end: 0);
+  }
+
+  Widget _buildPhaseAnalysis(Map<String, List<String>> symptoms, Map<String, Map<String, int>> moods) {
+    final phases = [
+      AppConstants.phaseMenstrual,
+      AppConstants.phaseFollicular,
+      AppConstants.phaseOvulation,
+      AppConstants.phaseLuteal,
+    ];
+
+    final phaseColors = {
+      AppConstants.phaseMenstrual: AppTheme.cyclePeriod,
+      AppConstants.phaseFollicular: AppTheme.cycleFollicular,
+      AppConstants.phaseOvulation: AppTheme.cycleOvulation,
+      AppConstants.phaseLuteal: AppTheme.cycleLuteal,
+    };
+
+    return Column(
+      children: phases.map((phase) {
+        final phaseSymptoms = symptoms[phase] ?? [];
+        final phaseMoods = (moods[phase]?.entries.toList() ?? [])
+          ..sort((a, b) => b.value.compareTo(a.value));
+        final topMoods = phaseMoods.take(3).map((e) => e.key).toList();
+
+        if (phaseSymptoms.isEmpty && topMoods.isEmpty) return const SizedBox.shrink();
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: phaseColors[phase]!.withOpacity(0.2)),
+            boxShadow: [
+              BoxShadow(
+                color: phaseColors[phase]!.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 12,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: phaseColors[phase],
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    phase,
+                    style: GoogleFonts.outfit(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: phaseColors[phase],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              if (phaseSymptoms.isNotEmpty) ...[
+                Text("Common Symptoms:", style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.textSecondary)),
+                const SizedBox(height: 4),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: phaseSymptoms.map((s) => _buildChip(s, phaseColors[phase]!.withOpacity(0.1), phaseColors[phase]!)).toList(),
+                ),
+              ],
+              if (topMoods.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Text("Frequent Moods:", style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.textSecondary)),
+                const SizedBox(height: 4),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: topMoods.map((m) => _buildChip(m, Colors.blue.withOpacity(0.1), Colors.blue)).toList(),
+                ),
+              ],
+            ],
+          ),
+        ).animate().fadeIn(delay: 200.ms).slideX(begin: 0.1, end: 0);
+      }).toList(),
+    );
+  }
+
+  Widget _buildChip(String label, Color bgColor, Color textColor) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        label,
+        style: GoogleFonts.outfit(fontSize: 12, color: textColor, fontWeight: FontWeight.w500),
+      ),
     );
   }
 
@@ -199,7 +324,7 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
           ),
         ],
       ),
-    );
+    ).animate().fadeIn(delay: 100.ms).slideY(begin: 0.1, end: 0);
   }
 
   Widget _buildStatItem(String label, String value, IconData icon, Color color) {
@@ -415,7 +540,7 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
           );
         }).toList(),
       ),
-    );
+    ).animate().fadeIn(delay: 400.ms).slideX();
   }
 
   Widget _buildMoodPieChart(Map<String, int> moods) {

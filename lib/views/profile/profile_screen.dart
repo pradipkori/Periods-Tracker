@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -152,83 +153,95 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildModernHeader(settings, Color phaseColor) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.7),
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Colors.white, width: 2),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 20, offset: const Offset(0, 10))
-        ],
-      ),
-      child: Column(
-        children: [
-          Stack(
-            alignment: Alignment.center,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(30),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(color: Colors.white.withOpacity(0.3), width: 1.5),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10))
+            ],
+          ),
+          child: Column(
             children: [
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(colors: [phaseColor, phaseColor.withOpacity(0.7)]),
-                  boxShadow: [
-                    BoxShadow(color: phaseColor.withOpacity(0.3), blurRadius: 15, offset: const Offset(0, 5))
-                  ],
-                ),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(colors: [phaseColor, phaseColor.withOpacity(0.7)]),
+                      boxShadow: [
+                        BoxShadow(color: phaseColor.withOpacity(0.3), blurRadius: 15, offset: const Offset(0, 5))
+                      ],
+                    ),
+                  ),
+                  Text(
+                    settings.userName.isNotEmpty ? settings.userName[0].toUpperCase() : "U",
+                    style: GoogleFonts.outfit(fontSize: 40, color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                settings.userName,
+                style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
               ),
               Text(
-                settings.userName.isNotEmpty ? settings.userName[0].toUpperCase() : "U",
-                style: GoogleFonts.outfit(fontSize: 40, color: Colors.white, fontWeight: FontWeight.bold),
+                "Account Settings",
+                style: GoogleFonts.outfit(fontSize: 14, color: AppTheme.textSecondary, fontWeight: FontWeight.w500),
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          Text(
-            settings.userName,
-            style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
-          ),
-          Text(
-            "Account Settings",
-            style: GoogleFonts.outfit(fontSize: 14, color: AppTheme.textSecondary, fontWeight: FontWeight.w500),
-          ),
-        ],
+        ),
       ),
     ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.9, 0.9));
   }
 
   Widget _buildModernSection(String title, IconData icon, List<Widget> items, int index) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.7),
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: Colors.white, width: 2),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 15, offset: const Offset(0, 5))
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
-            child: Row(
-              children: [
-                Icon(icon, size: 18, color: AppTheme.textSecondary),
-                const SizedBox(width: 10),
-                Text(
-                  title,
-                  style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.textSecondary),
-                ),
-              ],
-            ),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(28),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.12),
+            borderRadius: BorderRadius.circular(28),
+            border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.5),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 15, offset: const Offset(0, 5))
+            ],
           ),
-          const Divider(height: 1, color: Colors.white),
-          ...items,
-        ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+                child: Row(
+                  children: [
+                    Icon(icon, size: 18, color: AppTheme.textSecondary),
+                    const SizedBox(width: 10),
+                    Text(
+                      title,
+                      style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.textSecondary),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(height: 1, color: Colors.white24),
+              ...items,
+            ],
+          ),
+        ),
       ),
     ).animate().fadeIn(delay: (200 + index * 100).ms).slideY(begin: 0.1);
   }

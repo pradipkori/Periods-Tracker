@@ -63,7 +63,7 @@ class AnalyticsService {
     return Map.fromEntries(sortedEntries);
   }
 
-  // Get symptoms by cycle phase
+  // Get symptoms by cycle phase (Improved)
   Future<Map<String, List<String>>> getSymptomsByPhase() async {
     final cycles = await _db.getActualCycles();
     if (cycles.isEmpty) return {};
@@ -75,23 +75,33 @@ class AnalyticsService {
       AppConstants.phaseLuteal: {},
     };
 
-    for (final cycle in cycles.take(6)) {
-      // Analyze last 6 cycles
+    final settings = await _db.getSettings();
+    final lutealLength = settings.lutealPhaseLength;
+
+    for (final cycle in cycles.take(10)) { // Analyze up to last 10 cycles
       final cycleStart = cycle.startDate;
-      final cycleEnd = cycle.endDate ?? cycleStart.add(const Duration(days: 5));
+      final cycleEnd = cycle.endDate ?? cycleStart.add(const Duration(days: 28));
 
       // Get health logs for this cycle
       final logs = await _db.getHealthLogsInRange(cycleStart, cycleEnd);
+      
+      // Calculate cycle length for this specific cycle or use average
+      final nextCycle = cycles.indexOf(cycle) > 0 ? cycles[cycles.indexOf(cycle) - 1] : null;
+      final cycleLength = nextCycle != null 
+          ? nextCycle.startDate.difference(cycle.startDate).inDays 
+          : settings.averageCycleLength;
+
+      final ovulationDay = cycleLength - lutealLength;
 
       for (final log in logs) {
         final dayInCycle = log.date.difference(cycleStart).inDays + 1;
         String phase;
 
-        if (dayInCycle <= 5) {
+        if (dayInCycle <= (cycle.endDate != null ? cycle.endDate!.difference(cycle.startDate).inDays + 1 : 5)) {
           phase = AppConstants.phaseMenstrual;
-        } else if (dayInCycle <= 13) {
+        } else if (dayInCycle < ovulationDay - 2) {
           phase = AppConstants.phaseFollicular;
-        } else if (dayInCycle <= 16) {
+        } else if (dayInCycle <= ovulationDay + 2) {
           phase = AppConstants.phaseOvulation;
         } else {
           phase = AppConstants.phaseLuteal;
@@ -112,6 +122,56 @@ class AnalyticsService {
     }
 
     return result;
+  }
+
+  // Get mood correlation with cycle phases
+  Future<Map<String, Map<String, int>>> getMoodPhaseCorrelation() async {
+    final cycles = await _db.getActualCycles();
+    if (cycles.isEmpty) return {};
+
+    final correlations = <String, Map<String, int>>{
+      AppConstants.phaseMenstrual: {},
+      AppConstants.phaseFollicular: {},
+      AppConstants.phaseOvulation: {},
+      AppConstants.phaseLuteal: {},
+    };
+
+    final settings = await _db.getSettings();
+    final lutealLength = settings.lutealPhaseLength;
+
+    for (final cycle in cycles.take(10)) {
+      final cycleStart = cycle.startDate;
+      final cycleEnd = cycle.endDate ?? cycleStart.add(const Duration(days: 28));
+      final logs = await _db.getHealthLogsInRange(cycleStart, cycleEnd);
+      
+      final nextCycle = cycles.indexOf(cycle) > 0 ? cycles[cycles.indexOf(cycle) - 1] : null;
+      final cycleLength = nextCycle != null 
+          ? nextCycle.startDate.difference(cycle.startDate).inDays 
+          : settings.averageCycleLength;
+
+      final ovulationDay = cycleLength - lutealLength;
+
+      for (final log in logs) {
+        final dayInCycle = log.date.difference(cycleStart).inDays + 1;
+        String phase;
+
+        if (dayInCycle <= (cycle.endDate != null ? cycle.endDate!.difference(cycle.startDate).inDays + 1 : 5)) {
+          phase = AppConstants.phaseMenstrual;
+        } else if (dayInCycle < ovulationDay - 2) {
+          phase = AppConstants.phaseFollicular;
+        } else if (dayInCycle <= ovulationDay + 2) {
+          phase = AppConstants.phaseOvulation;
+        } else {
+          phase = AppConstants.phaseLuteal;
+        }
+
+        for (final mood in log.moods) {
+          correlations[phase]![mood] = (correlations[phase]![mood] ?? 0) + 1;
+        }
+      }
+    }
+
+    return correlations;
   }
 
   // Get weight trend data
