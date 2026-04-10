@@ -1,4 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/foundation.dart';
 import 'package:period_tracker/models/cycle_models.dart';
 import 'package:period_tracker/services/database_service.dart';
 import 'package:period_tracker/services/prediction_service.dart';
@@ -422,15 +423,17 @@ class NotificationService {
       type: 'local',
     ));
 
-    // Also schedule with AlarmManager
-    await AndroidAlarmManager.oneShotAt(
-      scheduledDate,
-      1,
-      alarmCallback,
-      exact: true,
-      wakeup: true,
-      rescheduleOnReboot: true,
-    );
+    // Also schedule with AlarmManager only on Android
+    if (!kIsWeb) {
+      await AndroidAlarmManager.oneShotAt(
+        scheduledDate,
+        1,
+        alarmCallback,
+        exact: true,
+        wakeup: true,
+        rescheduleOnReboot: true,
+      );
+    }
   }
 
   // Schedule ovulation reminder
@@ -475,15 +478,17 @@ class NotificationService {
           UILocalNotificationDateInterpretation.absoluteTime,
     );
 
-    // Also schedule with AlarmManager
-    await AndroidAlarmManager.oneShotAt(
-      scheduledDate,
-      2,
-      alarmCallback,
-      exact: true,
-      wakeup: true,
-      rescheduleOnReboot: true,
-    );
+    // Also schedule with AlarmManager only on Android
+    if (!kIsWeb) {
+      await AndroidAlarmManager.oneShotAt(
+        scheduledDate,
+        2,
+        alarmCallback,
+        exact: true,
+        wakeup: true,
+        rescheduleOnReboot: true,
+      );
+    }
   }
 
   // Schedule daily log reminder
@@ -537,16 +542,18 @@ class NotificationService {
       type: 'local',
     ));
 
-    // Also schedule with AlarmManager
-    await AndroidAlarmManager.periodic(
-      const Duration(days: 1),
-      3,
-      alarmCallback,
-      startAt: scheduledDate,
-      exact: true,
-      wakeup: true,
-      rescheduleOnReboot: true,
-    );
+    // Also schedule with AlarmManager only on Android
+    if (!kIsWeb) {
+      await AndroidAlarmManager.periodic(
+        const Duration(days: 1),
+        3,
+        alarmCallback,
+        startAt: scheduledDate,
+        exact: true,
+        wakeup: true,
+        rescheduleOnReboot: true,
+      );
+    }
   }
 
   // Schedule custom reminder
@@ -616,17 +623,18 @@ class NotificationService {
         matchDateTimeComponents: DateTimeComponents.time,
       );
 
-      // 2. Schedule with AlarmManager (Reliable for Realme/Oppo)
-      // Note: periodic with a startAt time
-      await AndroidAlarmManager.periodic(
-        const Duration(days: 1),
-        reminder.id + 1000,
-        alarmCallback,
-        startAt: scheduledDate,
-        exact: true,
-        wakeup: true,
-        rescheduleOnReboot: true,
-      );
+      // 2. Schedule with AlarmManager (Reliable for Realme/Oppo) only on Android
+      if (!kIsWeb) {
+        await AndroidAlarmManager.periodic(
+          const Duration(days: 1),
+          reminder.id + 1000,
+          alarmCallback,
+          startAt: scheduledDate,
+          exact: true,
+          wakeup: true,
+          rescheduleOnReboot: true,
+        );
+      }
 
       print('Successfully scheduled reminder ${reminder.id} using both methods');
     } catch (e) {
@@ -662,8 +670,10 @@ class NotificationService {
   // Cancel specific notification
   Future<void> cancelNotification(int id) async {
     await _notifications.cancel(id);
-    // Also cancel from AlarmManager
-    await AndroidAlarmManager.cancel(id);
+    // Also cancel from AlarmManager only on Android
+    if (!kIsWeb) {
+      await AndroidAlarmManager.cancel(id);
+    }
   }
 
   // Reschedule all notifications

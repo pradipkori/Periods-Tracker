@@ -7,12 +7,13 @@ import 'dart:convert';
 
 class PushNotificationService {
   final DatabaseService _db;
-  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
+  final FirebaseMessaging? _fcm = kIsWeb ? null : FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
 
   PushNotificationService(this._db);
 
   Future<void> init() async {
+    if (_fcm == null) return;
     // Request permission (especially for iOS)
     NotificationSettings settings = await _fcm.requestPermission(
       alert: true,

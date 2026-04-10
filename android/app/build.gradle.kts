@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.antigravity.period_tracker"
-    compileSdk = 36  // Required by path_provider_android
+    compileSdk = 36
     ndkVersion = "27.0.12077973"  // Explicitly set NDK version
 
     compileOptions {
@@ -24,7 +24,7 @@ android {
     defaultConfig {
         applicationId = "com.antigravity.period_tracker"
         minSdk = flutter.minSdkVersion  // Explicitly set minimum SDK
-        targetSdk = 36  // Match compileSdk
+        targetSdk = 34  // Use stable target SDK
         versionCode = 1
         versionName = "1.0"
         multiDexEnabled = true

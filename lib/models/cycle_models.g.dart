@@ -15,7 +15,7 @@ extension GetCycleLogCollection on Isar {
 
 const CycleLogSchema = CollectionSchema(
   name: r'CycleLog',
-  id: 7118254954233171190,
+  id: 7118254954233170944,
   properties: {
     r'endDate': PropertySchema(
       id: 0,
@@ -65,7 +65,7 @@ const CycleLogSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'startDate': IndexSchema(
-      id: 7723980484494730382,
+      id: 7723980484494730240,
       name: r'startDate',
       unique: false,
       replace: false,
@@ -1648,7 +1648,7 @@ extension GetHealthLogCollection on Isar {
 
 const HealthLogSchema = CollectionSchema(
   name: r'HealthLog',
-  id: 2640082775277681278,
+  id: 2640082775277681152,
   properties: {
     r'cervicalMucus': PropertySchema(
       id: 0,
@@ -1738,7 +1738,7 @@ const HealthLogSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'date': IndexSchema(
-      id: -7552997827385218417,
+      id: -7552997827385218048,
       name: r'date',
       unique: true,
       replace: false,
@@ -4702,7 +4702,7 @@ extension GetUserSettingsCollection on Isar {
 
 const UserSettingsSchema = CollectionSchema(
   name: r'UserSettings',
-  id: 4939698790990493221,
+  id: 4939698790990493696,
   properties: {
     r'averageCycleLength': PropertySchema(
       id: 0,
@@ -4817,7 +4817,7 @@ const UserSettingsSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'userName': IndexSchema(
-      id: -1677712070637581736,
+      id: -1677712070637581824,
       name: r'userName',
       unique: false,
       replace: false,
@@ -7277,7 +7277,7 @@ extension GetReminderCollection on Isar {
 
 const ReminderSchema = CollectionSchema(
   name: r'Reminder',
-  id: -8566764253612256045,
+  id: -8566764253612256256,
   properties: {
     r'hourOfDay': PropertySchema(
       id: 0,
@@ -7327,7 +7327,7 @@ const ReminderSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'reminderDate': IndexSchema(
-      id: -8358223065858447343,
+      id: -8358223065858447360,
       name: r'reminderDate',
       unique: false,
       replace: false,
@@ -8590,7 +8590,7 @@ extension GetArticleCollection on Isar {
 
 const ArticleSchema = CollectionSchema(
   name: r'Article',
-  id: 9049022761614856892,
+  id: 9049022761614857216,
   properties: {
     r'category': PropertySchema(
       id: 0,
@@ -8620,7 +8620,7 @@ const ArticleSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'createdAt': IndexSchema(
-      id: -3433535483987302584,
+      id: -3433535483987302400,
       name: r'createdAt',
       unique: false,
       replace: false,
@@ -9575,7 +9575,7 @@ extension GetPregnancyDataCollection on Isar {
 
 const PregnancyDataSchema = CollectionSchema(
   name: r'PregnancyData',
-  id: -8410593268011823707,
+  id: -8410593268011824128,
   properties: {
     r'date': PropertySchema(
       id: 0,
@@ -9620,7 +9620,7 @@ const PregnancyDataSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'date': IndexSchema(
-      id: -7552997827385218417,
+      id: -7552997827385218048,
       name: r'date',
       unique: false,
       replace: false,
@@ -11217,7 +11217,7 @@ extension GetStoredNotificationCollection on Isar {
 
 const StoredNotificationSchema = CollectionSchema(
   name: r'StoredNotification',
-  id: 2191948281567647997,
+  id: 2191948281567648000,
   properties: {
     r'body': PropertySchema(
       id: 0,
@@ -11257,7 +11257,7 @@ const StoredNotificationSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'timestamp': IndexSchema(
-      id: 1852253767416892198,
+      id: 1852253767416892160,
       name: r'timestamp',
       unique: false,
       replace: false,

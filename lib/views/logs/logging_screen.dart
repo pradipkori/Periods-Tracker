@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:period_tracker/theme/app_theme.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:period_tracker/models/cycle_models.dart';
+import 'package:period_tracker/providers/app_providers.dart';
 
 class LoggingScreen extends ConsumerStatefulWidget {
   const LoggingScreen({super.key});
@@ -14,6 +16,18 @@ class LoggingScreen extends ConsumerStatefulWidget {
 class _LoggingScreenState extends ConsumerState<LoggingScreen> {
   final List<String> _selectedSymptoms = [];
   final List<String> _selectedMoods = [];
+  
+  final TextEditingController _weightController = TextEditingController();
+  final TextEditingController _tempController = TextEditingController();
+  final TextEditingController _waterController = TextEditingController();
+
+  @override
+  void dispose() {
+    _weightController.dispose();
+    _tempController.dispose();
+    _waterController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -165,16 +179,16 @@ class _LoggingScreenState extends ConsumerState<LoggingScreen> {
   Widget _buildMetricsInput() {
     return Column(
       children: [
-        _metricTile("Weight", "kg", Icons.monitor_weight_outlined),
+        _metricTile("Weight", "kg", Icons.monitor_weight_outlined, _weightController),
         const SizedBox(height: 12),
-        _metricTile("Temperature", "°C", Icons.thermostat_outlined),
+        _metricTile("Temperature", "°C", Icons.thermostat_outlined, _tempController),
         const SizedBox(height: 12),
-        _metricTile("Water", "ml", Icons.water_drop_outlined),
+        _metricTile("Water", "ml", Icons.water_drop_outlined, _waterController),
       ],
     );
   }
 
-  Widget _metricTile(String label, String unit, IconData icon) {
+  Widget _metricTile(String label, String unit, IconData icon, TextEditingController controller) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -191,6 +205,7 @@ class _LoggingScreenState extends ConsumerState<LoggingScreen> {
           SizedBox(
             width: 80,
             child: TextField(
+              controller: controller,
               textAlign: TextAlign.right,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
@@ -209,10 +224,7 @@ class _LoggingScreenState extends ConsumerState<LoggingScreen> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: () {
-          // TODO: Implement actual save logic with ref.read(dbServiceProvider)
-          Navigator.pop(context);
-        },
+        onPressed: _saveLog,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.primary,
           foregroundColor: Colors.white,
@@ -224,5 +236,34 @@ class _LoggingScreenState extends ConsumerState<LoggingScreen> {
         child: Text("SAVE LOG", style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold)),
       ),
     ).animate().fadeIn(delay: 800.ms).slideY(begin: 0.1, end: 0);
+  }
+
+  Future<void> _saveLog() async {
+    final db = ref.read(dbServiceProvider);
+    
+    final log = HealthLog(
+      date: DateTime.now(),
+      weight: double.tryParse(_weightController.text),
+      temperature: double.tryParse(_tempController.text),
+      waterIntake: int.tryParse(_waterController.text),
+    );
+    
+    log.symptoms = List.from(_selectedSymptoms);
+    log.moods = List.from(_selectedMoods);
+    
+    await db.saveHealthLog(log);
+    
+    // Invalidate providers to refresh UI
+    ref.invalidate(healthScoreProvider);
+    ref.invalidate(symptomFrequencyProvider);
+    ref.invalidate(moodFrequencyProvider);
+    ref.invalidate(insightsProvider);
+    
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Daily health log saved!')),
+      );
+      Navigator.pop(context);
+    }
   }
 }

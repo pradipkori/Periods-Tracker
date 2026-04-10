@@ -1,24 +1,34 @@
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:period_tracker/models/cycle_models.dart';
 
 class DatabaseService {
   late Isar isar;
 
   Future<void> init() async {
-    final dir = await getApplicationDocumentsDirectory();
-    isar = await Isar.open(
-      [
-        CycleLogSchema,
-        HealthLogSchema,
-        UserSettingsSchema,
-        ReminderSchema,
-        ArticleSchema,
-        PregnancyDataSchema,
-        StoredNotificationSchema,
-      ],
-      directory: dir.path,
-    );
+    final List<CollectionSchema<dynamic>> schemas = [
+      CycleLogSchema,
+      HealthLogSchema,
+      UserSettingsSchema,
+      ReminderSchema,
+      ArticleSchema,
+      PregnancyDataSchema,
+      StoredNotificationSchema,
+    ];
+
+    if (kIsWeb) {
+      isar = await Isar.open(
+        schemas,
+        directory: '', // On web, directory is ignored but required by the API
+      );
+    } else {
+      final dir = await getApplicationDocumentsDirectory();
+      isar = await Isar.open(
+        schemas,
+        directory: dir.path,
+      );
+    }
     
     // Initialize default settings if not exists
     final settingsCount = await isar.userSettings.count();
