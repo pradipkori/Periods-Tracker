@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -8,6 +9,12 @@ import 'package:period_tracker/views/home/home_screen.dart';
 import 'package:period_tracker/views/onboarding/onboarding_screen.dart';
 import 'package:period_tracker/views/auth/password_screen.dart';
 
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:period_tracker/services/push_notification_service.dart';
+import 'package:timezone/timezone.dart' as tz;
+
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
@@ -15,58 +22,92 @@ class SplashScreen extends ConsumerStatefulWidget {
   ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends ConsumerState<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _fadeAnimation;
-  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
     super.initState();
+
     _controller = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
-    );
-
-    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
-
     _controller.forward();
-    _navigateToHome();
+
+    _initializeAndNavigate();
   }
 
-  Future<void> _navigateToHome() async {
-    await Future.delayed(const Duration(seconds: 3));
-    
+  Future<void> _initializeAndNavigate() async {
+    // Run splash animation for at least 3s while init runs in parallel
+    final animationDelay = Future.delayed(const Duration(seconds: 3));
+
+    // Safe fallback destination
+    Widget destination = const OnboardingScreen();
+
+    try {
+      // Step 1: Firebase & AlarmManager (mobile only)
+      if (!kIsWeb) {
+        await Firebase.initializeApp();
+        FirebaseMessaging.onBackgroundMessage(
+          firebaseMessagingBackgroundHandler,
+        );
+        await AndroidAlarmManager.initialize();
+      }
+
+      // Step 2: Timezone
+      try {
+        tz.setLocalLocation(tz.getLocation('Asia/Kolkata'));
+      } catch (e) {
+        debugPrint('Timezone init error: $e');
+      }
+
+      // Step 3: Database — init() is safe to call multiple times now
+      final dbService = ref.read(dbServiceProvider);
+      await dbService.init();
+
+      // Step 4: Cleanup duplicates
+      try {
+        await dbService.clearAllDuplicates();
+      } catch (e) {
+        debugPrint('Cleanup error: $e');
+      }
+
+      // Step 5: Local notifications
+      final notificationService = ref.read(notificationServiceProvider);
+      await notificationService.init();
+      await notificationService.requestPermissions();
+
+      // Step 6: Push notifications (mobile only)
+      if (!kIsWeb) {
+        await ref.read(pushNotificationServiceProvider).init();
+      }
+
+      // Step 7: Read settings — safe because DB is guaranteed initialized
+      final settings = await dbService.getSettings();
+
+      if (!settings.hasCompletedOnboarding) {
+        destination = const OnboardingScreen();
+      } else if (settings.passcode != null &&
+          settings.passcode!.isNotEmpty) {
+        destination = const PasswordLockScreen(child: HomeScreen());
+      } else {
+        destination = const HomeScreen();
+      }
+    } catch (e) {
+      debugPrint('App initialization error: $e');
+      // Falls back to OnboardingScreen
+    }
+
+    // Always wait for animation before navigating
+    await animationDelay;
+
     if (!mounted) return;
 
-    final settings = await ref.read(dbServiceProvider).getSettings();
-
-    Widget destination;
-
-    // Check if onboarding is completed
-    if (!settings.hasCompletedOnboarding) {
-      destination = const OnboardingScreen();
-    } 
-    // Check if password is set
-    else if (settings.passcode != null && settings.passcode!.isNotEmpty) {
-      destination = const PasswordLockScreen(child: HomeScreen());
-    } 
-    // Go to home
-    else {
-      destination = const HomeScreen();
-    }
-
-    if (mounted) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => destination),
-      );
-    }
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => destination),
+    );
   }
 
   @override
@@ -85,14 +126,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
             end: Alignment.bottomRight,
             colors: [
               AppTheme.primary,
-              AppTheme.primary.withRed(255).withBlue(150), // More vibrant pink
+              AppTheme.primary.withRed(255).withBlue(150),
               AppTheme.primaryLight,
             ],
           ),
         ),
         child: Stack(
           children: [
-            // Decorative floating circles
+            // Decorative floating circle — top right
             Positioned(
               top: -100,
               right: -50,
@@ -104,9 +145,18 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
                   color: Colors.white.withOpacity(0.05),
                 ),
               ),
-            ).animate(onPlay: (controller) => controller.repeat(reverse: true))
-             .moveY(begin: -20, end: 20, duration: 3.seconds, curve: Curves.easeInOut),
-            
+            )
+                .animate(
+                  onPlay: (controller) => controller.repeat(reverse: true),
+                )
+                .moveY(
+                  begin: -20,
+                  end: 20,
+                  duration: 3.seconds,
+                  curve: Curves.easeInOut,
+                ),
+
+            // Decorative floating circle — bottom left
             Positioned(
               bottom: -50,
               left: -50,
@@ -118,8 +168,16 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
                   color: Colors.white.withOpacity(0.05),
                 ),
               ),
-            ).animate(onPlay: (controller) => controller.repeat(reverse: true))
-             .moveY(begin: 20, end: -20, duration: 4.seconds, curve: Curves.easeInOut),
+            )
+                .animate(
+                  onPlay: (controller) => controller.repeat(reverse: true),
+                )
+                .moveY(
+                  begin: 20,
+                  end: -20,
+                  duration: 4.seconds,
+                  curve: Curves.easeInOut,
+                ),
 
             Center(
               child: Column(
@@ -150,29 +208,35 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
                       color: AppTheme.primary,
                     ),
                   )
-                  .animate()
-                  .fadeIn(duration: 800.ms)
-                  .scale(begin: const Offset(0.3, 0.3), curve: Curves.elasticOut, duration: 1200.ms)
-                  .shimmer(delay: 1500.ms, duration: 2.seconds)
-                  .then()
-                  .animate(onPlay: (controller) => controller.repeat())
-                  .custom(
-                    duration: 4.seconds,
-                    builder: (context, value, child) {
-                      return Transform(
-                        transform: Matrix4.identity()
-                          ..setEntry(3, 2, 0.002) // perspective
-                          ..rotateY(value * 6.28) // full rotation
-                          ..rotateX(0.2),
-                        alignment: Alignment.center,
-                        child: child,
-                      );
-                    },
-                  ),
-                  
+                      .animate()
+                      .fadeIn(duration: 800.ms)
+                      .scale(
+                        begin: const Offset(0.3, 0.3),
+                        curve: Curves.elasticOut,
+                        duration: 1200.ms,
+                      )
+                      .shimmer(delay: 1500.ms, duration: 2.seconds)
+                      .then()
+                      .animate(
+                        onPlay: (controller) => controller.repeat(),
+                      )
+                      .custom(
+                        duration: 4.seconds,
+                        builder: (context, value, child) {
+                          return Transform(
+                            transform: Matrix4.identity()
+                              ..setEntry(3, 2, 0.002)
+                              ..rotateY(value * 6.28)
+                              ..rotateX(0.2),
+                            alignment: Alignment.center,
+                            child: child,
+                          );
+                        },
+                      ),
+
                   const SizedBox(height: 48),
-                  
-                  // Title with stagger animation
+
+                  // App title
                   Text(
                     'Period Tracker',
                     style: GoogleFonts.outfit(
@@ -189,12 +253,16 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
                       ],
                     ),
                   )
-                  .animate()
-                  .fadeIn(delay: 600.ms, duration: 800.ms)
-                  .slideY(begin: 0.3, end: 0, curve: Curves.easeOutBack),
-                  
+                      .animate()
+                      .fadeIn(delay: 600.ms, duration: 800.ms)
+                      .slideY(
+                        begin: 0.3,
+                        end: 0,
+                        curve: Curves.easeOutBack,
+                      ),
+
                   const SizedBox(height: 12),
-                  
+
                   // Subtitle
                   Text(
                     'Track. Predict. Understand.',
@@ -205,24 +273,29 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
                       letterSpacing: 0.5,
                     ),
                   )
-                  .animate()
-                  .fadeIn(delay: 100.ms, duration: 800.ms)
-                  .slideY(begin: 0.5, end: 0, curve: Curves.easeOut),
+                      .animate()
+                      .fadeIn(delay: 100.ms, duration: 800.ms)
+                      .slideY(
+                        begin: 0.5,
+                        end: 0,
+                        curve: Curves.easeOut,
+                      ),
 
                   const SizedBox(height: 60),
-                  
-                  // Loading indicator
+
+                  // Loading bar
                   const SizedBox(
                     width: 40,
                     height: 2,
                     child: LinearProgressIndicator(
                       backgroundColor: Colors.white24,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.white),
                     ),
                   )
-                  .animate()
-                  .fadeIn(delay: 1500.ms)
-                  .scaleX(begin: 0),
+                      .animate()
+                      .fadeIn(delay: 1500.ms)
+                      .scaleX(begin: 0),
                 ],
               ),
             ),

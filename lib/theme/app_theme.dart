@@ -20,6 +20,19 @@ class AppTheme {
   static const Color cycleOvulation = Color(0xFFFFD166);
   static const Color cycleLuteal = Color(0xFF4ECDC4);
 
+  // Text Styles
+  static TextStyle get headlineMedium => GoogleFonts.outfit(
+    fontSize: 28,
+    fontWeight: FontWeight.bold,
+    color: textPrimary,
+  );
+
+  static TextStyle get headlineSmall => GoogleFonts.outfit(
+    fontSize: 24,
+    fontWeight: FontWeight.w600,
+    color: textPrimary,
+  );
+
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,

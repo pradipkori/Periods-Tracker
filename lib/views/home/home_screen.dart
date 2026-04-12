@@ -11,6 +11,7 @@ import 'package:period_tracker/views/logs/period_logging_screen.dart';
 import 'package:period_tracker/views/insights/insights_screen.dart';
 import 'package:period_tracker/views/profile/profile_screen.dart';
 import 'package:period_tracker/views/notifications/notifications_screen.dart';
+import 'package:period_tracker/views/chat/chat_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -124,12 +125,23 @@ class HomeScreen extends ConsumerWidget {
               ),
             ],
           ),
-          _GlassButton(
-            icon: Icons.notifications_none_rounded,
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const NotificationsScreen()),
-            ),
+          Row(
+            children: [
+              _SakhiGlassButton(
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ChatScreen()),
+                ),
+              ),
+              const SizedBox(width: 12),
+              _GlassButton(
+                icon: Icons.notifications_none_rounded,
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -472,6 +484,32 @@ class _GlassButton extends StatelessWidget {
           border: Border.all(color: Colors.white, width: 1.5),
         ),
         child: Icon(icon, color: AppTheme.textPrimary, size: 24),
+      ),
+    );
+  }
+}
+class _SakhiGlassButton extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const _SakhiGlassButton({required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.5),
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.white, width: 1.5),
+        ),
+        child: Image.asset(
+          'assets/icon/sakhi_icon.png',
+          height: 24,
+          width: 24,
+          color: AppTheme.primary,
+        ),
       ),
     );
   }
