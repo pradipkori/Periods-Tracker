@@ -32,13 +32,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final apiKey = ref.watch(apiKeyProvider);
     final chatState = ref.watch(chatProvider);
-
-    // Scroll to bottom when messages update
-    if (chatState.messages.isNotEmpty) {
-      _scrollToBottom();
-    }
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -86,18 +80,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 ],
               ),
               actions: [
-                if (apiKey != null) ...[
-                  IconButton(
-                    tooltip: "Change API Key(s)",
-                    icon: const Icon(Icons.vpn_key_off_rounded, color: AppTheme.textSecondary, size: 22),
-                    onPressed: () => ref.read(apiKeyProvider.notifier).removeKey(),
-                  ),
-                  IconButton(
-                    tooltip: "Clear Chat",
-                    icon: const Icon(Icons.cleaning_services_rounded, color: AppTheme.textSecondary, size: 22),
-                    onPressed: () => ref.read(chatProvider.notifier).clearChat(),
-                  ),
-                ],
+                IconButton(
+                  tooltip: "Clear Chat",
+                  icon: const Icon(Icons.cleaning_services_rounded, color: AppTheme.textSecondary, size: 22),
+                  onPressed: () => ref.read(chatProvider.notifier).clearChat(),
+                ),
                 const SizedBox(width: 8),
               ],
             ),
@@ -119,14 +106,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         ),
         child: SafeArea(
           bottom: false,
-          // If no API key is set, show the setup screen instead of chat
-          child: apiKey == null ? _buildApiKeySetup() : _buildChatView(chatState),
+          // Always go straight to chat — keys are hardcoded
+          child: _buildChatView(chatState),
         ),
       ),
     );
   }
 
   Widget _buildChatView(ChatState chatState) {
+    // Auto-scroll whenever messages change
+    if (chatState.messages.isNotEmpty) {
+      _scrollToBottom();
+    }
     return Column(
       children: [
         Expanded(

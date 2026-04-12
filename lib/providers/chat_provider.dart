@@ -92,10 +92,8 @@ class ChatNotifier extends StateNotifier<ChatState> {
   ChatService? _chatService;
 
   ChatNotifier(this.apiKey) : super(const ChatState()) {
-    if (apiKey != null && apiKey!.isNotEmpty) {
-      // Always use hardcoded keys for rotation; user key is just the activation gate.
-      _chatService = ChatService(ApiKeys.geminiKeys);
-    }
+    // Always use hardcoded keys — no stored key required.
+    _chatService = ChatService(ApiKeys.geminiKeys);
     // Initial greeting message
     state = ChatState(messages: [
       ChatMessage(
@@ -146,8 +144,7 @@ class ChatNotifier extends StateNotifier<ChatState> {
         timestamp: DateTime.now(),
       ),
     ]);
-    if (apiKey != null && apiKey!.isNotEmpty) {
-      _chatService = ChatService(ApiKeys.geminiKeys); // Reinstantiate to clear session
-    }
+    // Reinstantiate to clear session
+    _chatService = ChatService(ApiKeys.geminiKeys);
   }
 }
