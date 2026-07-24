@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-import 'package:printing/printing.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:period_tracker/models/cycle_models.dart';
 import 'package:period_tracker/services/database_service.dart';
@@ -27,7 +26,7 @@ class ExportService {
     const secondaryColor = PdfColor.fromInt(0xFF8B5CF6);
     const textColor = PdfColor.fromInt(0xFF2D3142);
     const lightTextColor = PdfColor.fromInt(0xFF9EA3B0);
-    const bgColor = PdfColor.fromInt(0xFFFDFAFB);
+
 
     pdf.addPage(
       pw.MultiPage(

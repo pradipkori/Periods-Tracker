@@ -10,4 +10,8 @@ class ApiKeys {
     'AIzaSyBO5tc1i293CYM7sl9eVd5zPi_lcfKv--M', // Key 3
     'AIzaSyATVi0-Nbs1B1JcEPv57k9j7i5tmXHTHiY'  // KEY 4
   ];
+
+  // Supabase Configuration
+  static const String supabaseUrl = 'https://jfpbyubfnpkldbqxompp.supabase.co';
+  static const String supabaseAnonKey = 'sb_publishable_7hXXRPrtb5WbMMzcdIrddQ_YPnHr5Zl';
 }

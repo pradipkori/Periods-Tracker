@@ -249,13 +249,15 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
     await notificationService.rescheduleAllNotifications();
   }
 
-  Future<void> _toggleReminder(int id, bool value) async {
+  Future<void> _toggleReminder(String? id, bool enabled) async {
+    if (id == null) return;
     final db = ref.read(dbServiceProvider);
-    await db.toggleReminder(id, value);
+    await db.toggleReminder(id, enabled);
     ref.invalidate(remindersProvider);
   }
 
-  Future<void> _deleteReminder(int id) async {
+  Future<void> _deleteReminder(String? id) async {
+    if (id == null) return;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(

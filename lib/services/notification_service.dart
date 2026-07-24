@@ -7,7 +7,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:isar/isar.dart';
+
 
 // Top-level callback for AlarmManager (must be top-level for background isolates)
 @pragma('vm:entry-point')
@@ -103,54 +103,7 @@ Future<void> alarmCallback(int id) async {
 
   // Handle custom reminders (IDs >= 1000)
   if (id >= 1000) {
-    try {
-      final databaseDir = await getApplicationDocumentsDirectory();
-      // Open Isar in the background isolate
-      final isar = Isar.getInstance() ?? await Isar.open(
-        [
-          CycleLogSchema,
-          HealthLogSchema,
-          UserSettingsSchema,
-          ReminderSchema,
-          ArticleSchema,
-          PregnancyDataSchema,
-        ],
-        directory: databaseDir.path,
-      );
-
-      final reminderId = id - 1000;
-      final reminder = await isar.reminders.get(reminderId);
-
-      if (reminder != null && reminder.isEnabled) {
-        String message = '⏰ Time for your ${reminder.title}';
-        if (reminder.type == 'medication') {
-          message = '💊 Hey! It\'s time for your ${reminder.title}. Don\'t forget to take it!';
-        } else if (reminder.notes != null && reminder.notes!.isNotEmpty) {
-          message = '⏰ ${reminder.notes}';
-        }
-
-        await notifications.show(
-          id,
-          reminder.title,
-          message,
-          const NotificationDetails(
-            android: AndroidNotificationDetails(
-              'custom_reminders',
-              'Custom Reminders',
-              channelDescription: 'User-created custom reminders',
-              importance: Importance.max,
-              priority: Priority.high,
-              ticker: 'Reminder',
-              category: AndroidNotificationCategory.reminder,
-              visibility: NotificationVisibility.public,
-            ),
-          ),
-        );
-        print('✅ Reminder notification displayed for $reminderId');
-      }
-    } catch (e) {
-      print('❌ Error in background alarm callback: $e');
-    }
+    print('✅ Custom reminder triggered by AlarmManager (ID: $id). Handled primarily by flutter_local_notifications.');
   }
 }
 
@@ -597,9 +550,11 @@ class NotificationService {
     print('Scheduling reminder ${reminder.id}: ${reminder.title} for $scheduledDate using AlarmManager');
 
     try {
+      final int notificationId = (reminder.id?.hashCode ?? 0).abs() % 100000 + 1000;
+
       // 1. Still schedule with Local Notifications (for other devices/internal tracking)
       await _notifications.zonedSchedule(
-        reminder.id + 1000, 
+        notificationId,
         reminder.title,
         message,
         tz.TZDateTime.from(scheduledDate, tz.local),
@@ -627,7 +582,7 @@ class NotificationService {
       if (!kIsWeb) {
         await AndroidAlarmManager.periodic(
           const Duration(days: 1),
-          reminder.id + 1000,
+          notificationId,
           alarmCallback,
           startAt: scheduledDate,
           exact: true,

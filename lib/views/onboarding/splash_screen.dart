@@ -8,6 +8,8 @@ import 'package:period_tracker/theme/app_theme.dart';
 import 'package:period_tracker/views/home/home_screen.dart';
 import 'package:period_tracker/views/onboarding/onboarding_screen.dart';
 import 'package:period_tracker/views/auth/password_screen.dart';
+import 'package:period_tracker/views/auth/auth_screen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -87,7 +89,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       // Step 7: Read settings — safe because DB is guaranteed initialized
       final settings = await dbService.getSettings();
 
-      if (!settings.hasCompletedOnboarding) {
+      final currentSession = Supabase.instance.client.auth.currentSession;
+      
+      if (currentSession == null) {
+        destination = const AuthScreen();
+      } else if (!settings.hasCompletedOnboarding) {
         destination = const OnboardingScreen();
       } else if (settings.passcode != null &&
           settings.passcode!.isNotEmpty) {

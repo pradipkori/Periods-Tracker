@@ -193,7 +193,9 @@ class _PeriodLoggingScreenState extends ConsumerState<PeriodLoggingScreen> {
     for (final cycle in allCycles) {
       if ((cycle.startDate.month == loggedMonth && cycle.startDate.year == loggedYear) || 
           cycle.isPredicted) {
-        await db.deleteCycle(cycle.id);
+      if (cycle.id != null) {
+        await db.deleteCycle(cycle.id!);
+      }
         print('🗑️ Deleted ${cycle.isPredicted ? "prediction" : "old manual entry"} for ${cycle.startDate}');
       }
     }

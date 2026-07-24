@@ -18,7 +18,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   Map<String, String> _dayPhases = {}; // Store phase for each day
-  bool _isLoading = true;
+
 
   @override
   void initState() {
@@ -29,7 +29,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
   Future<void> _loadCycleData() async {
     if (!mounted) return;
-    setState(() => _isLoading = true);
+
     
     final predictionService = ref.read(predictionServiceProvider);
     final dbService = ref.read(dbServiceProvider);
@@ -72,7 +72,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     if (mounted) {
       setState(() {
         _dayPhases = phases;
-        _isLoading = false;
+
       });
     }
   }

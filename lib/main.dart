@@ -3,10 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:period_tracker/theme/app_theme.dart';
 import 'package:period_tracker/views/onboarding/splash_screen.dart';
 import 'package:timezone/data/latest.dart' as tz;
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:period_tracker/config/api_keys.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   tz.initializeTimeZones();
+
+  await Supabase.initialize(
+    url: ApiKeys.supabaseUrl,
+    publishableKey: ApiKeys.supabaseAnonKey,
+  );
 
   runApp(
     const ProviderScope(

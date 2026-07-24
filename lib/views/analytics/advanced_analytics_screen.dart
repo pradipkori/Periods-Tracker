@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:period_tracker/providers/app_providers.dart';
 import 'package:period_tracker/theme/app_theme.dart';
-import 'package:period_tracker/utils/date_utils.dart' as app_date_utils;
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:period_tracker/utils/constants.dart';
 
@@ -512,7 +511,6 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
       ),
       child: Column(
         children: topSymptoms.map((entry) {
-          final percentage = (entry.value / maxValue * 100).toInt();
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: Column(
