@@ -1,7 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:period_tracker/theme/app_theme.dart';
+import 'package:period_tracker/views/onboarding/splash_screen.dart';
+import 'package:period_tracker/views/info/legal_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -12,6 +16,27 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   bool _isLoading = false;
+  late final StreamSubscription<AuthState> _authStateSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _authStateSubscription = Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      final session = data.session;
+      if (session != null) {
+        // OAuth flow returned successfully, go back to splash screen which handles routing
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const SplashScreen()),
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _authStateSubscription.cancel();
+    super.dispose();
+  }
 
   Future<void> _signInWithGoogle() async {
     setState(() => _isLoading = true);
@@ -71,12 +96,6 @@ class _AuthScreenState extends State<AuthScreen> {
                         ),
                       ),
                     ],
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close, color: AppTheme.textSecondary),
-                    onPressed: () {
-                      // Optional: handle closing if this was a modal
-                    },
                   ),
                 ],
               ),
@@ -201,11 +220,17 @@ class _AuthScreenState extends State<AuthScreen> {
                                 TextSpan(
                                   text: 'Terms of Service',
                                   style: TextStyle(color: Colors.red.shade400, decoration: TextDecoration.underline),
+                                  recognizer: TapGestureRecognizer()..onTap = () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) => const LegalScreen(title: 'Terms of Service', content: termsOfServiceContent)));
+                                  },
                                 ),
                                 const TextSpan(text: ' and '),
                                 TextSpan(
                                   text: 'Privacy\nPolicy.',
                                   style: TextStyle(color: Colors.red.shade400, decoration: TextDecoration.underline),
+                                  recognizer: TapGestureRecognizer()..onTap = () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) => const LegalScreen(title: 'Privacy Policy', content: privacyPolicyContent)));
+                                  },
                                 ),
                               ],
                             ),
@@ -275,11 +300,17 @@ class _AuthScreenState extends State<AuthScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _footerLink('Privacy Policy'),
+                      _footerLink('Privacy Policy', () {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const LegalScreen(title: 'Privacy Policy', content: privacyPolicyContent)));
+                      }),
                       _footerDot(),
-                      _footerLink('Terms of Service'),
+                      _footerLink('Terms of Service', () {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const LegalScreen(title: 'Terms of Service', content: termsOfServiceContent)));
+                      }),
                       _footerDot(),
-                      _footerLink('Help Center'),
+                      _footerLink('Help Center', () {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const LegalScreen(title: 'Help Center', content: helpCenterContent)));
+                      }),
                     ],
                   ),
                   const SizedBox(height: 8),
@@ -299,13 +330,16 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
   
-  Widget _footerLink(String text) {
-    return Text(
-      text,
-      style: GoogleFonts.outfit(
-        fontSize: 11,
-        fontWeight: FontWeight.w500,
-        color: AppTheme.textSecondary,
+  Widget _footerLink(String text, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Text(
+        text,
+        style: GoogleFonts.outfit(
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+          color: AppTheme.textSecondary,
+        ),
       ),
     );
   }

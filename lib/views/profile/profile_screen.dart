@@ -10,6 +10,8 @@ import 'package:period_tracker/views/auth/password_screen.dart';
 import 'package:period_tracker/views/pregnancy/pregnancy_mode_screen.dart';
 import 'package:period_tracker/views/onboarding/onboarding_screen.dart';
 import 'package:period_tracker/views/analytics/advanced_analytics_screen.dart';
+import 'package:period_tracker/views/auth/auth_screen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -367,10 +369,13 @@ class ProfileScreen extends ConsumerWidget {
     );
 
     if (confirmed == true && context.mounted) {
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const OnboardingScreen()),
-        (route) => false,
-      );
+      await Supabase.instance.client.auth.signOut();
+      if (context.mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const AuthScreen()),
+          (route) => false,
+        );
+      }
     }
   }
 }
