@@ -6,7 +6,6 @@ import 'package:period_tracker/services/prediction_service.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
-import 'package:path_provider/path_provider.dart';
 
 
 // Top-level callback for AlarmManager (must be top-level for background isolates)

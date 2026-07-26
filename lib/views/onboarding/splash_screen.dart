@@ -148,7 +148,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 height: 300,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.05),
+                  color: Colors.white.withValues(alpha: 0.05),
                 ),
               ),
             )
@@ -171,7 +171,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 height: 200,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.05),
+                  color: Colors.white.withValues(alpha: 0.05),
                 ),
               ),
             )
@@ -197,12 +197,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.15),
+                          color: Colors.black.withValues(alpha: 0.15),
                           blurRadius: 30,
                           offset: const Offset(0, 15),
                         ),
                         BoxShadow(
-                          color: AppTheme.primary.withOpacity(0.3),
+                          color: AppTheme.primary.withValues(alpha: 0.3),
                           blurRadius: 20,
                           spreadRadius: -5,
                         ),
@@ -252,7 +252,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                       letterSpacing: 1.2,
                       shadows: [
                         Shadow(
-                          color: Colors.black.withOpacity(0.2),
+                          color: Colors.black.withValues(alpha: 0.2),
                           offset: const Offset(0, 4),
                           blurRadius: 10,
                         ),
@@ -274,7 +274,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     'Track. Predict. Understand.',
                     style: GoogleFonts.outfit(
                       fontSize: 18,
-                      color: Colors.white.withOpacity(0.95),
+                      color: Colors.white.withValues(alpha: 0.95),
                       fontWeight: FontWeight.w500,
                       letterSpacing: 0.5,
                     ),

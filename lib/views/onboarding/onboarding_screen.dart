@@ -75,9 +75,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                AppTheme.primary.withOpacity(0.15),
+                AppTheme.primary.withValues(alpha: 0.15),
                 AppTheme.background,
-                AppTheme.secondary.withOpacity(0.05),
+                AppTheme.secondary.withValues(alpha: 0.05),
               ],
             ),
           ),
@@ -87,19 +87,19 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         Positioned(
           top: -100 + (_currentPage * -30),
           right: -50 + (_currentPage * 20),
-          child: _buildOrb(300, AppTheme.primary.withOpacity(0.1)),
+          child: _buildOrb(300, AppTheme.primary.withValues(alpha: 0.1)),
         ).animate().moveY(begin: -10, end: 10, duration: 4.seconds, curve: Curves.easeInOut).then().animate(onPlay: (c) => c.repeat(reverse: true)),
         
         Positioned(
           bottom: -50 + (_currentPage * 40),
           left: -80 + (_currentPage * -15),
-          child: _buildOrb(250, AppTheme.secondary.withOpacity(0.08)),
+          child: _buildOrb(250, AppTheme.secondary.withValues(alpha: 0.08)),
         ).animate().moveY(begin: 15, end: -15, duration: 5.seconds, curve: Curves.easeInOut).then().animate(onPlay: (c) => c.repeat(reverse: true)),
         
         Positioned(
           top: 200 + (_currentPage * 50),
           left: -100 + (_currentPage * 30),
-          child: _buildOrb(180, Colors.pink.withOpacity(0.05)),
+          child: _buildOrb(180, Colors.pink.withValues(alpha: 0.05)),
         ).animate().moveX(begin: -20, end: 20, duration: 6.seconds, curve: Curves.easeInOut).then().animate(onPlay: (c) => c.repeat(reverse: true)),
       ],
     );
@@ -112,7 +112,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: RadialGradient(
-          colors: [color, color.withOpacity(0)],
+          colors: [color, color.withValues(alpha: 0)],
         ),
       ),
     );
@@ -129,12 +129,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             child: Container(
               padding: padding ?? const EdgeInsets.all(32),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.15),
+                color: Colors.white.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(32),
-                border: Border.all(color: Colors.white.withOpacity(0.3), width: 1.5),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 1.5),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   ),
@@ -159,7 +159,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               color: Colors.white,
               shape: BoxShape.circle,
               boxShadow: [
-                BoxShadow(color: AppTheme.primary.withOpacity(0.2), blurRadius: 20, spreadRadius: 5)
+                BoxShadow(color: AppTheme.primary.withValues(alpha: 0.2), blurRadius: 20, spreadRadius: 5)
               ],
             ),
             child: const Icon(Icons.favorite, size: 80, color: AppTheme.primary),
@@ -181,7 +181,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             textAlign: TextAlign.center,
             style: GoogleFonts.outfit(
               fontSize: 16,
-              color: AppTheme.textSecondary.withOpacity(0.8),
+              color: AppTheme.textSecondary.withValues(alpha: 0.8),
               fontWeight: FontWeight.w500,
             ),
           ).animate().fadeIn(delay: 500.ms).slideY(begin: 0.2, end: 0),
@@ -210,9 +210,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             onChanged: (value) => setState(() => _userName = value),
             decoration: InputDecoration(
               hintText: 'Enter your name',
-              hintStyle: GoogleFonts.outfit(color: AppTheme.textSecondary.withOpacity(0.5)),
+              hintStyle: GoogleFonts.outfit(color: AppTheme.textSecondary.withValues(alpha: 0.5)),
               filled: true,
-              fillColor: Colors.white.withOpacity(0.8),
+              fillColor: Colors.white.withValues(alpha: 0.8),
               contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -266,10 +266,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             child: Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.9),
+                color: Colors.white.withValues(alpha: 0.9),
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
-                  BoxShadow(color: AppTheme.primary.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, 8))
+                  BoxShadow(color: AppTheme.primary.withValues(alpha: 0.1), blurRadius: 20, offset: const Offset(0, 8))
                 ],
               ),
               child: Row(
@@ -364,9 +364,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
             activeTrackColor: AppTheme.primary,
-            inactiveTrackColor: AppTheme.primary.withOpacity(0.1),
+            inactiveTrackColor: AppTheme.primary.withValues(alpha: 0.1),
             thumbColor: Colors.white,
-            overlayColor: AppTheme.primary.withOpacity(0.1),
+            overlayColor: AppTheme.primary.withValues(alpha: 0.1),
             trackHeight: 6,
             thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12, elevation: 4),
           ),
@@ -453,7 +453,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 width: _currentPage == index ? 24 : 8,
                 height: 8,
                 decoration: BoxDecoration(
-                  color: _currentPage == index ? AppTheme.primary : AppTheme.primary.withOpacity(0.15),
+                  color: _currentPage == index ? AppTheme.primary : AppTheme.primary.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
@@ -467,7 +467,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               backgroundColor: AppTheme.primary,
               foregroundColor: Colors.white,
               elevation: 4,
-              shadowColor: AppTheme.primary.withOpacity(0.4),
+              shadowColor: AppTheme.primary.withValues(alpha: 0.4),
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             ),

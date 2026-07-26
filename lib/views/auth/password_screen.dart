@@ -184,7 +184,7 @@ class _PasswordLockScreenState extends ConsumerState<PasswordLockScreen> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              AppTheme.primary.withOpacity(0.1),
+              AppTheme.primary.withValues(alpha: 0.1),
               AppTheme.background,
             ],
           ),

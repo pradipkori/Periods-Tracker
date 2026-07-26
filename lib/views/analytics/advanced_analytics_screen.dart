@@ -35,7 +35,7 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
             healthScoreAsync.when(
               data: (score) => _buildHealthScoreCard(score),
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, __) => const SizedBox.shrink(),
+              error: (_, _) => const SizedBox.shrink(),
             ),
             const SizedBox(height: 24),
 
@@ -49,10 +49,10 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
               data: (data) => moodPhaseAsync.when(
                 data: (moodData) => _buildPhaseAnalysis(data, moodData),
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (_, __) => const SizedBox.shrink(),
+                error: (_, _) => const SizedBox.shrink(),
               ),
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, __) => const SizedBox.shrink(),
+              error: (_, _) => const SizedBox.shrink(),
             ),
             const SizedBox(height: 24),
 
@@ -65,7 +65,7 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
             statsAsync.when(
               data: (stats) => _buildCycleOverview(stats),
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, __) => const SizedBox.shrink(),
+              error: (_, _) => const SizedBox.shrink(),
             ),
             const SizedBox(height: 24),
 
@@ -78,7 +78,7 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
             cycleTrendAsync.when(
               data: (trend) => trend.isNotEmpty ? _buildCycleTrendChart(trend) : _buildNoDataCard("Not enough cycle data"),
               loading: () => const CircularProgressIndicator(),
-              error: (_, __) => const SizedBox.shrink(),
+              error: (_, _) => const SizedBox.shrink(),
             ),
             const SizedBox(height: 24),
 
@@ -91,7 +91,7 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
             periodTrendAsync.when(
               data: (trend) => trend.isNotEmpty ? _buildPeriodTrendChart(trend) : _buildNoDataCard("Not enough period data"),
               loading: () => const CircularProgressIndicator(),
-              error: (_, __) => const SizedBox.shrink(),
+              error: (_, _) => const SizedBox.shrink(),
             ),
             const SizedBox(height: 24),
 
@@ -104,7 +104,7 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
             symptomFreqAsync.when(
               data: (symptoms) => symptoms.isNotEmpty ? _buildSymptomChart(symptoms) : _buildNoDataCard("No symptom data"),
               loading: () => const CircularProgressIndicator(),
-              error: (_, __) => const SizedBox.shrink(),
+              error: (_, _) => const SizedBox.shrink(),
             ),
             const SizedBox(height: 24),
 
@@ -117,7 +117,7 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
             moodFreqAsync.when(
               data: (moods) => moods.isNotEmpty ? _buildMoodPieChart(moods) : _buildNoDataCard("No mood data"),
               loading: () => const CircularProgressIndicator(),
-              error: (_, __) => const SizedBox.shrink(),
+              error: (_, _) => const SizedBox.shrink(),
             ),
             const SizedBox(height: 24),
           ],
@@ -153,14 +153,14 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [scoreColor.withOpacity(0.8), scoreColor],
+          colors: [scoreColor.withValues(alpha: 0.8), scoreColor],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: scoreColor.withOpacity(0.3),
+            color: scoreColor.withValues(alpha: 0.3),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -183,12 +183,12 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
                 ),
                 Text(
                   scoreLabel,
-                  style: GoogleFonts.outfit(fontSize: 16, color: Colors.white.withOpacity(0.9)),
+                  style: GoogleFonts.outfit(fontSize: 16, color: Colors.white.withValues(alpha: 0.9)),
                 ),
               ],
             ),
           ),
-          Icon(scoreIcon, size: 80, color: Colors.white.withOpacity(0.3)),
+          Icon(scoreIcon, size: 80, color: Colors.white.withValues(alpha: 0.3)),
         ],
       ),
     ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.2, end: 0);
@@ -224,10 +224,10 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: phaseColors[phase]!.withOpacity(0.2)),
+            border: Border.all(color: phaseColors[phase]!.withValues(alpha: 0.2)),
             boxShadow: [
               BoxShadow(
-                color: phaseColors[phase]!.withOpacity(0.05),
+                color: phaseColors[phase]!.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -264,7 +264,7 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: phaseSymptoms.map((s) => _buildChip(s, phaseColors[phase]!.withOpacity(0.1), phaseColors[phase]!)).toList(),
+                  children: phaseSymptoms.map((s) => _buildChip(s, phaseColors[phase]!.withValues(alpha: 0.1), phaseColors[phase]!)).toList(),
                 ),
               ],
               if (topMoods.isNotEmpty) ...[
@@ -274,7 +274,7 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: topMoods.map((m) => _buildChip(m, Colors.blue.withOpacity(0.1), Colors.blue)).toList(),
+                  children: topMoods.map((m) => _buildChip(m, Colors.blue.withValues(alpha: 0.1), Colors.blue)).toList(),
                 ),
               ],
             ],
@@ -304,7 +304,7 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.black.withOpacity(0.05)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
       ),
       child: Column(
         children: [
@@ -330,7 +330,7 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -351,7 +351,7 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.black.withOpacity(0.05)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
       ),
       child: LineChart(
         LineChartData(
@@ -361,7 +361,7 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
             horizontalInterval: 5,
             getDrawingHorizontalLine: (value) {
               return FlLine(
-                color: Colors.grey.withOpacity(0.2),
+                color: Colors.grey.withValues(alpha: 0.2),
                 strokeWidth: 1,
               );
             },
@@ -412,7 +412,7 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
               ),
               belowBarData: BarAreaData(
                 show: true,
-                color: AppTheme.primary.withOpacity(0.1),
+                color: AppTheme.primary.withValues(alpha: 0.1),
               ),
             ),
           ],
@@ -428,7 +428,7 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.black.withOpacity(0.05)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
       ),
       child: LineChart(
         LineChartData(
@@ -438,7 +438,7 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
             horizontalInterval: 2,
             getDrawingHorizontalLine: (value) {
               return FlLine(
-                color: Colors.grey.withOpacity(0.2),
+                color: Colors.grey.withValues(alpha: 0.2),
                 strokeWidth: 1,
               );
             },
@@ -489,7 +489,7 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
               ),
               belowBarData: BarAreaData(
                 show: true,
-                color: AppTheme.accent.withOpacity(0.1),
+                color: AppTheme.accent.withValues(alpha: 0.1),
               ),
             ),
           ],
@@ -507,7 +507,7 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.black.withOpacity(0.05)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
       ),
       child: Column(
         children: topSymptoms.map((entry) {
@@ -560,7 +560,7 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.black.withOpacity(0.05)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
       ),
       child: Row(
         children: [
@@ -626,11 +626,11 @@ class AdvancedAnalyticsScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.black.withOpacity(0.05)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
       ),
       child: Column(
         children: [
-          Icon(Icons.analytics_outlined, size: 64, color: AppTheme.textSecondary.withOpacity(0.5)),
+          Icon(Icons.analytics_outlined, size: 64, color: AppTheme.textSecondary.withValues(alpha: 0.5)),
           const SizedBox(height: 16),
           Text(
             message,

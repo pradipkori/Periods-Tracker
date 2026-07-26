@@ -157,6 +157,8 @@ class UserSettings {
   bool hasCompletedOnboarding;
   bool dataBackupEnabled;
   DateTime? lastBackupDate;
+  int healthLogStreak;
+  DateTime? lastHealthLogDate;
 
   UserSettings({
     this.id,
@@ -181,6 +183,8 @@ class UserSettings {
     this.hasCompletedOnboarding = false,
     this.dataBackupEnabled = false,
     this.lastBackupDate,
+    this.healthLogStreak = 0,
+    this.lastHealthLogDate,
   });
 
   factory UserSettings.fromJson(Map<String, dynamic> json) {
@@ -207,6 +211,8 @@ class UserSettings {
       hasCompletedOnboarding: json['has_completed_onboarding'] as bool? ?? false,
       dataBackupEnabled: json['data_backup_enabled'] as bool? ?? false,
       lastBackupDate: json['last_backup_date'] != null ? DateTime.parse(json['last_backup_date'] as String).toLocal() : null,
+      healthLogStreak: json['health_log_streak'] as int? ?? 0,
+      lastHealthLogDate: json['last_health_log_date'] != null ? DateTime.parse(json['last_health_log_date'] as String).toLocal() : null,
     );
   }
 
@@ -234,6 +240,8 @@ class UserSettings {
       'has_completed_onboarding': hasCompletedOnboarding,
       'data_backup_enabled': dataBackupEnabled,
       'last_backup_date': lastBackupDate?.toUtc().toIso8601String(),
+      'health_log_streak': healthLogStreak,
+      'last_health_log_date': lastHealthLogDate?.toUtc().toIso8601String(),
     };
   }
 }

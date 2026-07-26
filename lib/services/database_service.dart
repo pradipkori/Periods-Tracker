@@ -165,6 +165,42 @@ class DatabaseService {
         data, 
         onConflict: 'user_id, date'
       );
+
+      // Gamification: Streak logic
+      final settings = await getSettings();
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      
+      if (settings.lastHealthLogDate != null) {
+        final lastLog = DateTime(
+          settings.lastHealthLogDate!.year, 
+          settings.lastHealthLogDate!.month, 
+          settings.lastHealthLogDate!.day
+        );
+        final diff = today.difference(lastLog).inDays;
+        
+        if (diff == 1) {
+          // Logged yesterday, increment streak
+          settings.healthLogStreak += 1;
+          settings.lastHealthLogDate = today;
+          await saveSettings(settings);
+        } else if (diff > 1) {
+          // Missed a day, reset streak
+          settings.healthLogStreak = 1;
+          settings.lastHealthLogDate = today;
+          await saveSettings(settings);
+        } else if (diff == 0 && settings.healthLogStreak == 0) {
+          // First log of the day, but streak was 0
+          settings.healthLogStreak = 1;
+          settings.lastHealthLogDate = today;
+          await saveSettings(settings);
+        }
+      } else {
+        // First log ever
+        settings.healthLogStreak = 1;
+        settings.lastHealthLogDate = today;
+        await saveSettings(settings);
+      }
     } catch (e) {
       debugPrint("Save HealthLog Error: $e");
     }

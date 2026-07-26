@@ -8,7 +8,6 @@ import 'package:period_tracker/theme/app_theme.dart';
 import 'package:period_tracker/views/profile/reminders_screen.dart';
 import 'package:period_tracker/views/auth/password_screen.dart';
 import 'package:period_tracker/views/pregnancy/pregnancy_mode_screen.dart';
-import 'package:period_tracker/views/onboarding/onboarding_screen.dart';
 import 'package:period_tracker/views/analytics/advanced_analytics_screen.dart';
 import 'package:period_tracker/views/auth/auth_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -31,7 +30,7 @@ class ProfileScreen extends ConsumerWidget {
         }
       },
       loading: () => AppTheme.primary,
-      error: (_, __) => AppTheme.primary,
+      error: (_, _) => AppTheme.primary,
     );
 
     return Scaffold(
@@ -54,9 +53,9 @@ class ProfileScreen extends ConsumerWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  phaseColor.withOpacity(0.12),
+                  phaseColor.withValues(alpha: 0.12),
                   AppTheme.background,
-                  phaseColor.withOpacity(0.05),
+                  phaseColor.withValues(alpha: 0.05),
                 ],
               ),
             ),
@@ -146,7 +145,7 @@ class ProfileScreen extends ConsumerWidget {
                 ),
               ),
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, __) => const Center(child: Text("Error loading settings")),
+              error: (_, _) => const Center(child: Text("Error loading settings")),
             ),
           ),
         ],
@@ -163,11 +162,11 @@ class ProfileScreen extends ConsumerWidget {
           padding: const EdgeInsets.all(24),
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.15),
+            color: Colors.white.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(30),
-            border: Border.all(color: Colors.white.withOpacity(0.3), width: 1.5),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 1.5),
             boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10))
+              BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 20, offset: const Offset(0, 10))
             ],
           ),
           child: Column(
@@ -180,9 +179,9 @@ class ProfileScreen extends ConsumerWidget {
                     height: 100,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: LinearGradient(colors: [phaseColor, phaseColor.withOpacity(0.7)]),
+                      gradient: LinearGradient(colors: [phaseColor, phaseColor.withValues(alpha: 0.7)]),
                       boxShadow: [
-                        BoxShadow(color: phaseColor.withOpacity(0.3), blurRadius: 15, offset: const Offset(0, 5))
+                        BoxShadow(color: phaseColor.withValues(alpha: 0.3), blurRadius: 15, offset: const Offset(0, 5))
                       ],
                     ),
                   ),
@@ -201,6 +200,32 @@ class ProfileScreen extends ConsumerWidget {
                 "Account Settings",
                 style: GoogleFonts.outfit(fontSize: 14, color: AppTheme.textSecondary, fontWeight: FontWeight.w500),
               ),
+              if (settings.healthLogStreak > 0) ...[
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.orangeAccent.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.orangeAccent.withValues(alpha: 0.5)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text("🔥", style: TextStyle(fontSize: 16)),
+                      const SizedBox(width: 8),
+                      Text(
+                        "${settings.healthLogStreak} Day Streak!",
+                        style: GoogleFonts.outfit(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange,
+                        ),
+                      ),
+                    ],
+                  ),
+                ).animate(onPlay: (controller) => controller.repeat(reverse: true)).scaleXY(begin: 1.0, end: 1.05, duration: 1.seconds),
+              ],
             ],
           ),
         ),
@@ -216,11 +241,11 @@ class ProfileScreen extends ConsumerWidget {
         child: Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.12),
+            color: Colors.white.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(28),
-            border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.5),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 1.5),
             boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 15, offset: const Offset(0, 5))
+              BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 15, offset: const Offset(0, 5))
             ],
           ),
           child: Column(
@@ -276,7 +301,7 @@ class ProfileScreen extends ConsumerWidget {
           children: [
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: AppTheme.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+              decoration: BoxDecoration(color: AppTheme.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
               child: Icon(icon, color: AppTheme.primary, size: 20),
             ),
             const SizedBox(width: 16),
@@ -299,9 +324,9 @@ class ProfileScreen extends ConsumerWidget {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 20),
         decoration: BoxDecoration(
-          color: Colors.red.withOpacity(0.05),
+          color: Colors.red.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: Colors.red.withOpacity(0.3), width: 1.5),
+          border: Border.all(color: Colors.red.withValues(alpha: 0.3), width: 1.5),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

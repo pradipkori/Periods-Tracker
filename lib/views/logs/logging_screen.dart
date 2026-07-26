@@ -117,9 +117,9 @@ class _LoggingScreenState extends ConsumerState<LoggingScreen> {
               color: isSelected ? AppTheme.primary : Colors.white,
               borderRadius: BorderRadius.circular(20),
               boxShadow: isSelected ? [
-                BoxShadow(color: AppTheme.primary.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 4))
+                BoxShadow(color: AppTheme.primary.withValues(alpha: 0.3), blurRadius: 10, offset: const Offset(0, 4))
               ] : [
-                BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 5)
+                BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 5)
               ],
             ),
             child: Column(
@@ -162,7 +162,7 @@ class _LoggingScreenState extends ConsumerState<LoggingScreen> {
               }
             });
           },
-          selectedColor: AppTheme.secondary.withOpacity(0.2),
+          selectedColor: AppTheme.secondary.withValues(alpha: 0.2),
           checkmarkColor: AppTheme.secondary,
           labelStyle: GoogleFonts.outfit(
             color: isSelected ? AppTheme.secondary : AppTheme.textPrimary,
@@ -194,7 +194,7 @@ class _LoggingScreenState extends ConsumerState<LoggingScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.black.withOpacity(0.05)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
       ),
       child: Row(
         children: [
@@ -231,7 +231,7 @@ class _LoggingScreenState extends ConsumerState<LoggingScreen> {
           padding: const EdgeInsets.symmetric(vertical: 18),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           elevation: 5,
-          shadowColor: AppTheme.primary.withOpacity(0.4),
+          shadowColor: AppTheme.primary.withValues(alpha: 0.4),
         ),
         child: Text("SAVE LOG", style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold)),
       ),

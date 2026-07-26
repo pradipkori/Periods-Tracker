@@ -115,9 +115,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  phaseColor.withOpacity(0.12),
+                  phaseColor.withValues(alpha: 0.12),
                   AppTheme.background,
-                  phaseColor.withOpacity(0.05),
+                  phaseColor.withValues(alpha: 0.05),
                 ],
               ),
             ),
@@ -148,11 +148,11 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.7),
+        color: Colors.white.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(32),
         border: Border.all(color: Colors.white, width: 2),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 24, offset: const Offset(0, 12))
+          BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 24, offset: const Offset(0, 12))
         ],
       ),
       child: TableCalendar(
@@ -181,7 +181,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         ),
         daysOfWeekStyle: DaysOfWeekStyle(
           weekdayStyle: GoogleFonts.outfit(color: AppTheme.textSecondary, fontWeight: FontWeight.w600, fontSize: 13),
-          weekendStyle: GoogleFonts.outfit(color: AppTheme.primary.withOpacity(0.6), fontWeight: FontWeight.w600, fontSize: 13),
+          weekendStyle: GoogleFonts.outfit(color: AppTheme.primary.withValues(alpha: 0.6), fontWeight: FontWeight.w600, fontSize: 13),
         ),
         calendarBuilders: CalendarBuilders(
           defaultBuilder: (context, day, focusedDay) => _buildDayWidget(day, false),
@@ -207,12 +207,12 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         shape: BoxShape.circle,
         color: isSelected 
             ? AppTheme.textPrimary 
-            : (hasPhase ? baseColor.withOpacity(isPredicted ? 0.08 : 0.2) : Colors.transparent),
+            : (hasPhase ? baseColor.withValues(alpha: isPredicted ? 0.08 : 0.2) : Colors.transparent),
         border: isToday && !isSelected 
             ? Border.all(color: AppTheme.primary, width: 1.5) 
-            : (isSelected ? null : (hasPhase ? Border.all(color: baseColor.withOpacity(isPredicted ? 0.05 : 0.15), width: 1) : null)),
+            : (isSelected ? null : (hasPhase ? Border.all(color: baseColor.withValues(alpha: isPredicted ? 0.05 : 0.15), width: 1) : null)),
         boxShadow: isSelected ? [
-          BoxShadow(color: AppTheme.textPrimary.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))
+          BoxShadow(color: AppTheme.textPrimary.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 4))
         ] : null,
       ),
       child: Center(
@@ -222,7 +222,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             Text(
               '${day.day}',
               style: GoogleFonts.outfit(
-                color: isSelected ? Colors.white : (hasPhase ? baseColor.withOpacity(isPredicted ? 0.6 : 1.0) : AppTheme.textPrimary),
+                color: isSelected ? Colors.white : (hasPhase ? baseColor.withValues(alpha: isPredicted ? 0.6 : 1.0) : AppTheme.textPrimary),
                 fontWeight: (hasPhase || isSelected || isToday) ? FontWeight.bold : FontWeight.w500,
                 fontSize: 15,
               ),
@@ -233,7 +233,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                 width: 4,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: baseColor.withOpacity(isPredicted ? 0.4 : 1.0), 
+                  color: baseColor.withValues(alpha: isPredicted ? 0.4 : 1.0), 
                   shape: BoxShape.circle
                 ),
               ),
@@ -263,9 +263,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.1)),
+        border: Border.all(color: color.withValues(alpha: 0.1)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -381,18 +381,18 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.7),
+        color: Colors.white.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white, width: 2),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 15, offset: const Offset(0, 5))
+          BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 15, offset: const Offset(0, 5))
         ],
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(15)),
+            decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(15)),
             child: Icon(icon, color: color, size: 22),
           ),
           const SizedBox(width: 16),

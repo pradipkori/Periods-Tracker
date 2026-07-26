@@ -46,7 +46,7 @@ class PregnancyModeScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (_, __) => const Center(child: Text("Error loading pregnancy data")),
+        error: (_, _) => const Center(child: Text("Error loading pregnancy data")),
       ),
     );
   }
@@ -100,7 +100,7 @@ class PregnancyModeScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primary.withOpacity(0.3),
+            color: AppTheme.primary.withValues(alpha: 0.3),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -115,7 +115,7 @@ class PregnancyModeScreen extends ConsumerWidget {
           const SizedBox(height: 8),
           Text(
             "$daysRemaining days until due date",
-            style: GoogleFonts.outfit(fontSize: 16, color: Colors.white.withOpacity(0.9)),
+            style: GoogleFonts.outfit(fontSize: 16, color: Colors.white.withValues(alpha: 0.9)),
           ),
         ],
       ),
@@ -128,7 +128,7 @@ class PregnancyModeScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.black.withOpacity(0.05)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,7 +157,7 @@ class PregnancyModeScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppTheme.accent.withOpacity(0.1),
+        color: AppTheme.accent.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(24),
       ),
       child: Row(
@@ -212,7 +212,7 @@ class PregnancyModeScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.black.withOpacity(0.05)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
       ),
       child: Column(
         children: [

@@ -67,8 +67,18 @@ class PredictionService {
     if (nextPeriod == null) return null;
 
     final settings = await _db.getSettings();
-    final result = CycleEngine.calculateOvulation(nextPeriod, settings.lutealPhaseLength);
-    print('DEBUG: Next period: $nextPeriod. Luteal phase: ${settings.lutealPhaseLength}. Predicted ovulation: $result');
+    
+    // Fetch recent health logs for biological markers (OPK, BBT)
+    final now = DateTime.now();
+    final thirtyDaysAgo = now.subtract(const Duration(days: 30));
+    final recentLogs = await _db.getHealthLogsInRange(thirtyDaysAgo, now);
+
+    final result = CycleEngine.calculateOvulation(
+      nextPeriod, 
+      settings.lutealPhaseLength,
+      recentLogs: recentLogs,
+    );
+    print('DEBUG: Next period: $nextPeriod. Luteal phase: ${settings.lutealPhaseLength}. Predicted ovulation: $result (with ${recentLogs.length} logs analyzed)');
     return result;
   }
 

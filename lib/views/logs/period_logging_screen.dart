@@ -122,7 +122,7 @@ class _PeriodLoggingScreenState extends ConsumerState<PeriodLoggingScreen> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.black.withOpacity(0.05)),
+          border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -174,7 +174,7 @@ class _PeriodLoggingScreenState extends ConsumerState<PeriodLoggingScreen> {
           padding: const EdgeInsets.symmetric(vertical: 18),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           elevation: 5,
-          shadowColor: AppTheme.primary.withOpacity(0.4),
+          shadowColor: AppTheme.primary.withValues(alpha: 0.4),
         ),
         child: Text("SAVE PERIOD", style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold)),
       ),

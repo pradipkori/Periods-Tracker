@@ -33,9 +33,9 @@ class InsightsScreen extends ConsumerWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  AppTheme.primary.withOpacity(0.1),
+                  AppTheme.primary.withValues(alpha: 0.1),
                   AppTheme.background,
-                  AppTheme.secondary.withOpacity(0.05),
+                  AppTheme.secondary.withValues(alpha: 0.05),
                 ],
               ),
             ),
@@ -51,7 +51,7 @@ class InsightsScreen extends ConsumerWidget {
                   healthScoreAsync.when(
                     data: (score) => _buildHealthScoreCard(score),
                     loading: () => const Center(child: CircularProgressIndicator()),
-                    error: (_, __) => const SizedBox.shrink(),
+                    error: (_, _) => const SizedBox.shrink(),
                   ),
                   const SizedBox(height: 24),
       
@@ -59,7 +59,7 @@ class InsightsScreen extends ConsumerWidget {
                   statsAsync.when(
                     data: (stats) => _buildStatsCard(stats),
                     loading: () => const Center(child: CircularProgressIndicator()),
-                    error: (_, __) => const SizedBox.shrink(),
+                    error: (_, _) => const SizedBox.shrink(),
                   ),
                   const SizedBox(height: 24),
       
@@ -67,7 +67,7 @@ class InsightsScreen extends ConsumerWidget {
                   symptomFreqAsync.when(
                     data: (freq) => freq.isNotEmpty ? _buildSymptomDistributionChart(freq) : const SizedBox.shrink(),
                     loading: () => const Center(child: CircularProgressIndicator()),
-                    error: (_, __) => const SizedBox.shrink(),
+                    error: (_, _) => const SizedBox.shrink(),
                   ),
                   const SizedBox(height: 24),
       
@@ -75,7 +75,7 @@ class InsightsScreen extends ConsumerWidget {
                   cycleTrendAsync.when(
                     data: (trend) => trend.isNotEmpty ? _buildCycleTrendChart(trend) : const SizedBox.shrink(),
                     loading: () => const Center(child: CircularProgressIndicator()),
-                    error: (_, __) => const SizedBox.shrink(),
+                    error: (_, _) => const SizedBox.shrink(),
                   ),
                   const SizedBox(height: 24),
       
@@ -83,7 +83,7 @@ class InsightsScreen extends ConsumerWidget {
                   insightsAsync.when(
                     data: (insights) => _buildInsightsList(insights),
                     loading: () => const Center(child: CircularProgressIndicator()),
-                    error: (_, __) => const SizedBox.shrink(),
+                    error: (_, _) => const SizedBox.shrink(),
                   ),
                   const SizedBox(height: 100), // Spacing for floating footer
                 ],
@@ -113,7 +113,7 @@ class InsightsScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.black.withOpacity(0.05)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,14 +211,14 @@ class InsightsScreen extends ConsumerWidget {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [scoreColor.withOpacity(0.8), scoreColor],
+          colors: [scoreColor.withValues(alpha: 0.8), scoreColor],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: scoreColor.withOpacity(0.3),
+            color: scoreColor.withValues(alpha: 0.3),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -237,7 +237,7 @@ class InsightsScreen extends ConsumerWidget {
           ),
           Text(
             scoreLabel,
-            style: GoogleFonts.outfit(fontSize: 20, color: Colors.white.withOpacity(0.9)),
+            style: GoogleFonts.outfit(fontSize: 20, color: Colors.white.withValues(alpha: 0.9)),
           ),
         ],
       ),
@@ -250,7 +250,7 @@ class InsightsScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.black.withOpacity(0.05)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -291,7 +291,7 @@ class InsightsScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.black.withOpacity(0.05)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -356,7 +356,7 @@ class InsightsScreen extends ConsumerWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppTheme.primary.withOpacity(0.2)),
+            border: Border.all(color: AppTheme.primary.withValues(alpha: 0.2)),
           ),
           child: Text(
             insight,

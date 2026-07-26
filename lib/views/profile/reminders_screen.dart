@@ -39,7 +39,7 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
             settingsAsync.when(
               data: (settings) => _buildSystemReminders(settings),
               loading: () => const CircularProgressIndicator(),
-              error: (_, __) => const SizedBox.shrink(),
+              error: (_, _) => const SizedBox.shrink(),
             ),
             const SizedBox(height: 24),
 
@@ -56,7 +56,7 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                       children: reminders.map((reminder) => _buildReminderCard(reminder)).toList(),
                     ),
               loading: () => const CircularProgressIndicator(),
-              error: (_, __) => const Text("Error loading reminders"),
+              error: (_, _) => const Text("Error loading reminders"),
             ),
           ],
         ),
@@ -70,7 +70,7 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.black.withOpacity(0.05)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,7 +126,7 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
         ),
         Switch(
           value: value,
-          activeColor: AppTheme.primary,
+          activeThumbColor: AppTheme.primary,
           onChanged: onChanged,
         ),
       ],
@@ -140,14 +140,14 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.black.withOpacity(0.05)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppTheme.primary.withOpacity(0.1),
+              color: AppTheme.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
@@ -173,7 +173,7 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
           ),
           Switch(
             value: reminder.isEnabled,
-            activeColor: AppTheme.primary,
+            activeThumbColor: AppTheme.primary,
             onChanged: (value) => _toggleReminder(reminder.id, value),
           ),
           IconButton(
@@ -308,7 +308,7 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
-                  value: type,
+                  initialValue: type,
                   decoration: const InputDecoration(labelText: "Type"),
                   items: const [
                     DropdownMenuItem(value: AppConstants.notificationTypeCustom, child: Text("Custom")),

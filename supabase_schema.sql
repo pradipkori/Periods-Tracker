@@ -29,6 +29,8 @@ CREATE TABLE public.user_settings (
   has_completed_onboarding BOOLEAN DEFAULT false,
   data_backup_enabled BOOLEAN DEFAULT false,
   last_backup_date TIMESTAMPTZ,
+  health_log_streak INT DEFAULT 0,
+  last_health_log_date TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );

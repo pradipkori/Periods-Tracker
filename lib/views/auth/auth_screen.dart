@@ -143,12 +143,12 @@ class _AuthScreenState extends State<AuthScreen> {
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
+                            color: Colors.black.withValues(alpha: 0.04),
                             blurRadius: 24,
                             offset: const Offset(0, 8),
                           ),
                           BoxShadow(
-                            color: AppTheme.primary.withOpacity(0.02),
+                            color: AppTheme.primary.withValues(alpha: 0.02),
                             blurRadius: 10,
                             spreadRadius: 2,
                           ),
@@ -163,7 +163,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 1.5,
-                              color: AppTheme.textSecondary.withOpacity(0.6),
+                              color: AppTheme.textSecondary.withValues(alpha: 0.6),
                             ),
                           ),
                           const SizedBox(height: 24),
@@ -177,10 +177,10 @@ class _AuthScreenState extends State<AuthScreen> {
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.black.withOpacity(0.08)),
+                                border: Border.all(color: Colors.black.withValues(alpha: 0.08)),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
+                                    color: Colors.black.withValues(alpha: 0.02),
                                     blurRadius: 4,
                                     offset: const Offset(0, 2),
                                   )
@@ -237,7 +237,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             textAlign: TextAlign.center,
                             style: GoogleFonts.outfit(
                               fontSize: 12,
-                              color: AppTheme.textSecondary.withOpacity(0.7),
+                              color: AppTheme.textSecondary.withValues(alpha: 0.7),
                               height: 1.5,
                             ),
                           ),
@@ -318,7 +318,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     '© 2026 Period Tracker Health. All rights reserved.',
                     style: GoogleFonts.outfit(
                       fontSize: 10,
-                      color: AppTheme.textSecondary.withOpacity(0.5),
+                      color: AppTheme.textSecondary.withValues(alpha: 0.5),
                     ),
                   ),
                 ],
@@ -349,7 +349,7 @@ class _AuthScreenState extends State<AuthScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Text(
         '•',
-        style: TextStyle(color: AppTheme.textSecondary.withOpacity(0.5), fontSize: 10),
+        style: TextStyle(color: AppTheme.textSecondary.withValues(alpha: 0.5), fontSize: 10),
       ),
     );
   }

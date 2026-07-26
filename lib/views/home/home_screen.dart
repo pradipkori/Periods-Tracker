@@ -53,9 +53,9 @@ class HomeScreen extends ConsumerWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  phaseColor.withOpacity(0.15),
+                  phaseColor.withValues(alpha: 0.15),
                   AppTheme.background,
-                  phaseColor.withOpacity(0.05),
+                  phaseColor.withValues(alpha: 0.05),
                 ],
               ),
             ),
@@ -116,12 +116,12 @@ class HomeScreen extends ConsumerWidget {
               settingsAsync.when(
                 data: (s) => Text("Welcome back,", style: GoogleFonts.outfit(color: AppTheme.textSecondary, fontSize: 14)),
                 loading: () => const SizedBox.shrink(),
-                error: (_, __) => const SizedBox.shrink(),
+                error: (_, _) => const SizedBox.shrink(),
               ),
               settingsAsync.when(
                 data: (s) => Text(s.userName, style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
                 loading: () => const SizedBox.shrink(),
-                error: (_, __) => const SizedBox.shrink(),
+                error: (_, _) => const SizedBox.shrink(),
               ),
             ],
           ),
@@ -160,7 +160,7 @@ class HomeScreen extends ConsumerWidget {
               height: 240 + (index * 40.0),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: phaseColor.withOpacity(0.05 * (3 - index)), width: 1.5),
+                border: Border.all(color: phaseColor.withValues(alpha: 0.05 * (3 - index)), width: 1.5),
               ),
             ).animate(onPlay: (c) => c.repeat(reverse: true))
              .scale(begin: const Offset(1, 1), end: Offset(1 + (index * 0.02), 1 + (index * 0.02)), duration: (1500 + (index * 500)).ms)
@@ -173,7 +173,7 @@ class HomeScreen extends ConsumerWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               boxShadow: [
-                BoxShadow(color: phaseColor.withOpacity(0.4), blurRadius: 40, spreadRadius: -10, offset: const Offset(0, 15)),
+                BoxShadow(color: phaseColor.withValues(alpha: 0.4), blurRadius: 40, spreadRadius: -10, offset: const Offset(0, 15)),
               ],
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -191,13 +191,13 @@ class HomeScreen extends ConsumerWidget {
                     style: GoogleFonts.outfit(fontSize: 34, fontWeight: FontWeight.w800, color: Colors.white, height: 1.1),
                   ),
                   loading: () => const CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                  error: (_, __) => const Icon(Icons.error_outline, color: Colors.white),
+                  error: (_, _) => const Icon(Icons.error_outline, color: Colors.white),
                 ),
                 const SizedBox(height: 12),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.15),
+                    color: Colors.white.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -218,14 +218,14 @@ class HomeScreen extends ConsumerWidget {
       children: [
         Expanded(child: _GlassStatTile(
           label: "Period In",
-          value: daysUntil.when(data: (d) => d != null ? "$d Days" : "...", loading: () => "...", error: (_, __) => "--"),
+          value: daysUntil.when(data: (d) => d != null ? "$d Days" : "...", loading: () => "...", error: (_, _) => "--"),
           icon: Icons.water_drop_rounded,
           color: phaseColor,
         )),
         const SizedBox(width: 20),
         Expanded(child: _GlassStatTile(
           label: "Cycle Day",
-          value: cycleDay.when(data: (d) => d != null ? "Day $d" : "--", loading: () => "...", error: (_, __) => "--"),
+          value: cycleDay.when(data: (d) => d != null ? "Day $d" : "--", loading: () => "...", error: (_, _) => "--"),
           icon: Icons.loop_rounded,
           color: AppTheme.secondary,
         )),
@@ -265,7 +265,7 @@ class HomeScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: phaseColor.withOpacity(0.08),
+            color: phaseColor.withValues(alpha: 0.08),
             blurRadius: 30,
             offset: const Offset(0, 12),
           ),
@@ -282,7 +282,7 @@ class HomeScreen extends ConsumerWidget {
               child: Icon(
                 Icons.spa_rounded,
                 size: 120,
-                color: phaseColor.withOpacity(0.05),
+                color: phaseColor.withValues(alpha: 0.05),
               ),
             ),
             Padding(
@@ -295,7 +295,7 @@ class HomeScreen extends ConsumerWidget {
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: phaseColor.withOpacity(0.1),
+                          color: phaseColor.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Icon(Icons.auto_awesome_rounded, color: phaseColor, size: 18),
@@ -317,7 +317,7 @@ class HomeScreen extends ConsumerWidget {
                       text,
                       style: GoogleFonts.outfit(
                         fontSize: 15,
-                        color: AppTheme.textSecondary.withOpacity(0.8),
+                        color: AppTheme.textSecondary.withValues(alpha: 0.8),
                         height: 1.6,
                         letterSpacing: 0.2,
                       ),
@@ -325,12 +325,12 @@ class HomeScreen extends ConsumerWidget {
                     loading: () => Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(width: double.infinity, height: 12, decoration: BoxDecoration(color: Colors.black.withOpacity(0.03), borderRadius: BorderRadius.circular(6))),
+                        Container(width: double.infinity, height: 12, decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.03), borderRadius: BorderRadius.circular(6))),
                         const SizedBox(height: 8),
-                        Container(width: 200, height: 12, decoration: BoxDecoration(color: Colors.black.withOpacity(0.03), borderRadius: BorderRadius.circular(6))),
+                        Container(width: 200, height: 12, decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.03), borderRadius: BorderRadius.circular(6))),
                       ],
                     ),
-                    error: (_, __) => const Text("Take a moment for yourself today. You're doing great!"),
+                    error: (_, _) => const Text("Take a moment for yourself today. You're doing great!"),
                   ),
                 ],
               ),
@@ -349,7 +349,7 @@ class HomeScreen extends ConsumerWidget {
         color: AppTheme.textPrimary,
         borderRadius: BorderRadius.circular(35),
         boxShadow: [
-          BoxShadow(color: AppTheme.textPrimary.withOpacity(0.3), blurRadius: 25, offset: const Offset(0, 10)),
+          BoxShadow(color: AppTheme.textPrimary.withValues(alpha: 0.3), blurRadius: 25, offset: const Offset(0, 10)),
         ],
       ),
       child: Row(
@@ -378,16 +378,16 @@ class _GlassStatTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.6),
+        color: Colors.white.withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: Colors.white.withOpacity(0.5), width: 1.5),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.5), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+            decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
             child: Icon(icon, color: color, size: 20),
           ),
           const SizedBox(height: 16),
@@ -417,10 +417,10 @@ class _ModernActionButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: color == AppTheme.textPrimary ? color : Colors.white,
           borderRadius: BorderRadius.circular(20),
-          border: color == AppTheme.textPrimary ? null : Border.all(color: color.withOpacity(0.2)),
+          border: color == AppTheme.textPrimary ? null : Border.all(color: color.withValues(alpha: 0.2)),
           boxShadow: [
             if (color != AppTheme.textPrimary) 
-              BoxShadow(color: color.withOpacity(0.1), blurRadius: 15, offset: const Offset(0, 5)),
+              BoxShadow(color: color.withValues(alpha: 0.1), blurRadius: 15, offset: const Offset(0, 5)),
           ],
         ),
         child: Row(
@@ -450,11 +450,11 @@ class _ModernNavItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: isActive ? BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.circular(20)) : null,
+        decoration: isActive ? BoxDecoration(color: Colors.white.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20)) : null,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: isActive ? AppTheme.primary : AppTheme.textSecondary.withOpacity(0.6), size: 26),
+            Icon(icon, color: isActive ? AppTheme.primary : AppTheme.textSecondary.withValues(alpha: 0.6), size: 26),
             if (isActive) ...[
               const SizedBox(height: 4),
               Container(width: 4, height: 4, decoration: const BoxDecoration(color: AppTheme.primary, shape: BoxShape.circle)),
@@ -479,7 +479,7 @@ class _GlassButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.5),
+          color: Colors.white.withValues(alpha: 0.5),
           shape: BoxShape.circle,
           border: Border.all(color: Colors.white, width: 1.5),
         ),
@@ -500,7 +500,7 @@ class _SakhiGlassButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.5),
+          color: Colors.white.withValues(alpha: 0.5),
           shape: BoxShape.circle,
           border: Border.all(color: Colors.white, width: 1.5),
         ),

@@ -65,14 +65,14 @@ class NotificationsScreen extends ConsumerWidget {
           Icon(
             Icons.notifications_off_outlined,
             size: 80,
-            color: AppTheme.textSecondary.withOpacity(0.2),
+            color: AppTheme.textSecondary.withValues(alpha: 0.2),
           ),
           const SizedBox(height: 16),
           Text(
             'No notifications yet',
             style: GoogleFonts.outfit(
               fontSize: 18,
-              color: AppTheme.textSecondary.withOpacity(0.5),
+              color: AppTheme.textSecondary.withValues(alpha: 0.5),
             ),
           ),
         ],
@@ -88,7 +88,7 @@ class NotificationsScreen extends ConsumerWidget {
     return ListView.separated(
       padding: const EdgeInsets.all(24),
       itemCount: notifications.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 16),
+      separatorBuilder: (_, _) => const SizedBox(height: 16),
       itemBuilder: (context, index) {
         final notification = notifications[index];
         return _NotificationTile(notification: notification);
@@ -139,7 +139,7 @@ class _NotificationTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -151,7 +151,7 @@ class _NotificationTile extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -180,7 +180,7 @@ class _NotificationTile extends StatelessWidget {
                       DateFormat('MMM d, HH:mm').format(notification.timestamp),
                       style: GoogleFonts.outfit(
                         fontSize: 12,
-                        color: AppTheme.textSecondary.withOpacity(0.6),
+                        color: AppTheme.textSecondary.withValues(alpha: 0.6),
                       ),
                     ),
                   ],

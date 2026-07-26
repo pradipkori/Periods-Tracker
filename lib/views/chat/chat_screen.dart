@@ -43,7 +43,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
             child: AppBar(
-              backgroundColor: Colors.white.withOpacity(0.3),
+              backgroundColor: Colors.white.withValues(alpha: 0.3),
               elevation: 0,
               centerTitle: true,
               leading: Padding(
@@ -59,7 +59,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: AppTheme.primary.withOpacity(0.1),
+                      color: AppTheme.primary.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Image.asset(
@@ -145,7 +145,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: Text(
@@ -171,7 +171,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         decoration: BoxDecoration(
-          color: message.isUser ? const Color(0xFFCD91DF) : Colors.white.withOpacity(0.85),
+          color: message.isUser ? const Color(0xFFCD91DF) : Colors.white.withValues(alpha: 0.85),
           borderRadius: BorderRadius.circular(24).copyWith(
             bottomRight: message.isUser ? const Radius.circular(0) : null,
             bottomLeft: !message.isUser ? const Radius.circular(0) : null,
@@ -179,8 +179,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           boxShadow: [
             BoxShadow(
               color: message.isUser
-                  ? const Color(0xFFCD91DF).withOpacity(0.3)
-                  : Colors.black.withOpacity(0.04),
+                  ? const Color(0xFFCD91DF).withValues(alpha: 0.3)
+                  : Colors.black.withValues(alpha: 0.04),
               blurRadius: 15,
               offset: const Offset(0, 5),
             ),
@@ -220,11 +220,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       padding: EdgeInsets.fromLTRB(
           20, 12, 20, MediaQuery.of(context).padding.bottom + 16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
+        color: Colors.white.withValues(alpha: 0.9),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 20,
             offset: const Offset(0, -5),
           ),
@@ -246,7 +246,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 decoration: InputDecoration(
                   hintText: "Ask Sakhi...",
                   hintStyle: GoogleFonts.outfit(
-                      color: AppTheme.textSecondary.withOpacity(0.7)),
+                      color: AppTheme.textSecondary.withValues(alpha: 0.7)),
                   border: InputBorder.none,
                 ),
                 onSubmitted: (val) => _sendMessage(val),
@@ -267,7 +267,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFB580D1).withOpacity(0.4),
+                    color: const Color(0xFFB580D1).withValues(alpha: 0.4),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -296,12 +296,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           margin: const EdgeInsets.all(24),
           padding: const EdgeInsets.all(32),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.85),
+            color: Colors.white.withValues(alpha: 0.85),
             borderRadius: BorderRadius.circular(40),
             border: Border.all(color: Colors.white, width: 2),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFB580D1).withOpacity(0.15),
+                color: const Color(0xFFB580D1).withValues(alpha: 0.15),
                 blurRadius: 40,
                 offset: const Offset(0, 15),
               ),
@@ -380,7 +380,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   decoration: InputDecoration(
                     hintText: "Paste API key(s) here (comma-separated for multiple)",
                     hintStyle: GoogleFonts.outfit(
-                        color: AppTheme.textSecondary.withOpacity(0.5), fontSize: 14),
+                        color: AppTheme.textSecondary.withValues(alpha: 0.5), fontSize: 14),
                     border: InputBorder.none,
                     icon: const Icon(Icons.vpn_key_rounded, color: Color(0xFFB580D1), size: 20),
                   ),
